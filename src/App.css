@@ -12,7 +12,7 @@
   --unit-color-vbs: #EE1166;
   --unit-color-wxs: #FF9900;
   --unit-color-n25: #884499;
-  --unit-color-oth: #aaaaaa;
+  --unit-color-oth: #ffffff;
   --unit-color-unk: #aaaaaa;
 }
 body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background-color: var(--bg-color); color: var(--text-color); }
