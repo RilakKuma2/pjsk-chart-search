@@ -65,4 +65,4 @@ pm2 startup
 1.nginx_setting.txt 와 같이 nginx 설정 수정
 
 /var/www/html/cover : jpg 앨범커버
-/var/www/html/svg : svg 채보파일 (참조 : https://pypi.org/project/pjsekai.scores/ )
+/var/www/html/svg : svg 채보파일 (참조 : https://pypi.org/project/pjsekai.scores/ https://github.com/paralleltree/Ched)
