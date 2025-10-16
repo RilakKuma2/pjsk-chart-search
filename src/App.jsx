@@ -207,7 +207,7 @@ function App() {
                       <a 
                         key={diff} 
                         // useWebP 상태에 따라 링크 동적 생성
-                        href={`/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'charts'}`}
+                        href={`/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className={`circle ${diff}`} 
