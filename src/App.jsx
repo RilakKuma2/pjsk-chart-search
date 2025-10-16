@@ -125,7 +125,7 @@ function App() {
             checked={useWebP}
             onChange={(e) => setUseWebP(e.target.checked)}
           />
-          <label htmlFor="webp-toggle">이미지로 채보 보기 (로딩 느리면 체크)</label>
+          <label htmlFor="webp-toggle">svg로 채보 보기(텍스트 검색 가능)</label>
         </div>
       </div>
 
@@ -207,7 +207,7 @@ function App() {
                       <a 
                         key={diff} 
                         // useWebP 상태에 따라 링크 동적 생성
-                        href={`/${useWebP ? 'webp' : 'svg'}/${song.id}/${diff}.${useWebP ? 'webp' : 'svg'}`}
+                        href={`/${useWebP ? 'svg' : 'charts'}/${song.id}/${diff}.${useWebP ? 'svg' : 'html'}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className={`circle ${diff}`} 
