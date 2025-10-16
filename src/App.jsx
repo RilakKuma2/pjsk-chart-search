@@ -43,13 +43,18 @@ function App() {
   const [error, setError] = useState(null);
   const [activeSongId, setActiveSongId] = useState(null);
 
+  // WebP 채보 사용 여부를 localStorage에서 불러와 초기 상태로 설정
+  const [useWebP, setUseWebP] = useState(
+    () => localStorage.getItem('useWebP') === 'true'
+  );
+
   // 터치 기기인지 여부를 앱 로딩 시 한 번만 확인
   const isTouchDevice = useMemo(() => {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }, []);
 
   useEffect(() => {
-    fetch('/api/songs')
+    fetch('https://rilaksekai.com/api/songs')
       .then(response => { if (!response.ok) throw new Error('네트워크 응답 오류'); return response.json(); })
       .then(data => { setAllSongs(data); setFilteredSongs(data); })
       .catch(error => setError(error))
@@ -84,6 +89,11 @@ function App() {
     };
   }, []);
 
+  // useWebP 상태가 변경될 때마다 localStorage에 저장
+  useEffect(() => {
+    localStorage.setItem('useWebP', useWebP);
+  }, [useWebP]);
+
   const handleFilterChange = (diff, value) => {
     setExpertLevel(''); setMasterLevel(''); setAppendLevel('');
     if (value) {
@@ -106,6 +116,18 @@ function App() {
           프로세카 계산기
         </a>
       </header>
+
+      <div className="format-toggle-container">
+        <div className="format-toggle">
+          <input
+            type="checkbox"
+            id="webp-toggle"
+            checked={useWebP}
+            onChange={(e) => setUseWebP(e.target.checked)}
+          />
+          <label htmlFor="webp-toggle">이미지로 채보 보기 (로딩 느리면 체크)</label>
+        </div>
+      </div>
 
       <div className="filter-bar">
         <input 
@@ -182,7 +204,15 @@ function App() {
                 <div className="difficulty-circles">
                   {difficulties.map(diff => (
                     song.levels[diff] ? (
-                      <a key={diff} href={`/svg/${song.id}/${diff}.svg`} target="_blank" rel="noopener noreferrer" className={`circle ${diff}`} title={`${diff.charAt(0).toUpperCase() + diff.slice(1)}: ${song.levels[diff]}`}>
+                      <a 
+                        key={diff} 
+                        // useWebP 상태에 따라 링크 동적 생성
+                        href={`/${useWebP ? 'webp' : 'svg'}/${song.id}/${diff}.${useWebP ? 'webp' : 'svg'}`}
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className={`circle ${diff}`} 
+                        title={`${diff.charAt(0).toUpperCase() + diff.slice(1)}: ${song.levels[diff]}`}
+                      >
                         {song.levels[diff]}
                       </a>
                     ) : (<div key={diff} className="circle-placeholder"></div>)
