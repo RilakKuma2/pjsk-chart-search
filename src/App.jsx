@@ -159,6 +159,9 @@ function App() {
             coverHandlers.onMouseEnter = () => setActiveSongId(song.id);
             coverHandlers.onMouseLeave = () => setActiveSongId(null);
           }
+          
+          // ver 필드를 기반으로 캐시 버스팅 문자열 생성
+          const cacheBuster = song.ver && song.ver !== "0" ? `?v=${song.ver}` : '';
 
           return (
             <div key={song.id} className="song-item">
@@ -168,7 +171,7 @@ function App() {
               >
                 <img 
                   loading="lazy" 
-                  src={`/cover/${String(song.id).padStart(3, '0')}.jpg`} 
+                  src={`/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`} 
                   alt={song.title_ko} 
                   className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`} 
                 />
@@ -206,8 +209,8 @@ function App() {
                     song.levels[diff] ? (
                       <a 
                         key={diff} 
-                        // useWebP 상태에 따라 링크 동적 생성
-                        href={`/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}`}
+                        // useWebP 상태와 cacheBuster를 함께 사용하여 링크 동적 생성
+                        href={`/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className={`circle ${diff}`} 
