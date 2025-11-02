@@ -54,7 +54,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/songs')
+    fetch('https://asset.rilaksekai.com/api/songs.json')
       .then(response => { if (!response.ok) throw new Error('네트워크 응답 오류'); return response.json(); })
       .then(data => { setAllSongs(data); setFilteredSongs(data); })
       .catch(error => setError(error))
@@ -106,7 +106,7 @@ function App() {
   const difficulties = ['easy', 'normal', 'hard', 'expert', 'master', 'append'];
   
   if (isLoading) return <div className="App"><h1>로딩 중...</h1></div>;
-  if (error) return <div className="App"><h1>데이터 불러오기 실패: {error.message}</h1></div>;
+  if (error) return <div className="App"><h1>ios웹앱(바로가기)면 재설치: {error.message}</h1></div>;
 
   return (
     <div className="App">
@@ -171,7 +171,7 @@ function App() {
               >
                 <img 
                   loading="lazy" 
-                  src={`/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`} 
+                  src={`https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`} 
                   alt={song.title_ko} 
                   className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`} 
                 />
@@ -210,7 +210,7 @@ function App() {
                       <a 
                         key={diff} 
                         // useWebP 상태와 cacheBuster를 함께 사용하여 링크 동적 생성
-                        href={`/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
+                        href={`https://asset.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className={`circle ${diff}`} 
