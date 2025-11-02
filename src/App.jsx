@@ -54,7 +54,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch('https://rilaksekai.com/api/songs')
+    fetch('/api/songs')
       .then(response => { if (!response.ok) throw new Error('네트워크 응답 오류'); return response.json(); })
       .then(data => { setAllSongs(data); setFilteredSongs(data); })
       .catch(error => setError(error))
