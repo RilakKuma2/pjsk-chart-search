@@ -5,6 +5,7 @@
   "type": "module",
   "homepage": "https://RilakKuma2.github.io/pjsk-chart-search",
   "scripts": {
+    "start": "vite",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",

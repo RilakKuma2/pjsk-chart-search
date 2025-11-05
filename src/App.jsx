@@ -69,13 +69,34 @@ function App() {
         (song.title_ko && song.title_ko.toLowerCase().includes(lowerCaseSearchTerm)) ||
         (song.title_jp && song.title_jp.toLowerCase().includes(lowerCaseSearchTerm)) ||
         (song.composer && song.composer.toLowerCase().includes(lowerCaseSearchTerm)) ||
-        (song.composer_jp && song.composer_jp.toLowerCase().includes(lowerCaseSearchTerm)) // [추가] 일본어 작곡가 검색 조건
+        (song.composer_jp && song.composer_jp.toLowerCase().includes(lowerCaseSearchTerm))
       );
-
     }
-    if (expertLevel) { result = result.filter(song => song.levels.expert === parseInt(expertLevel)); } 
-    else if (masterLevel) { result = result.filter(song => song.levels.master === parseInt(masterLevel)); } 
-    else if (appendLevel) { result = result.filter(song => song.levels.append === parseInt(appendLevel)); }
+
+    if (expertLevel) {
+      result = result.filter(song => song.levels.expert === parseInt(expertLevel));
+    } else if (masterLevel) {
+      result = result.filter(song => song.levels.master === parseInt(masterLevel));
+    } else if (appendLevel) {
+      result = result.filter(song => song.levels.append === parseInt(appendLevel));
+      
+      // APD 레벨 검색 시 정렬 로직
+      const getSortableDate = (song) => {
+        let dateStr;
+        if (song.apd) {
+          // apd는 'yy/mm/dd' 형식이므로 '20'을 앞에 붙여 'yyyy/mm/dd'로 만듭니다.
+          dateStr = `20${song.apd}`;
+        } else {
+          dateStr = song.release_date;
+        }
+        // 날짜 문자열이 유효하지 않으면 아주 오래된 날짜를 반환하여 정렬 시 뒤로 보냅니다.
+        if (!dateStr) return new Date(0);
+        return new Date(dateStr);
+      };
+
+      result.sort((a, b) => getSortableDate(b) - getSortableDate(a));
+    }
+
     setFilteredSongs(result);
   }, [searchTerm, expertLevel, masterLevel, appendLevel, allSongs]);
 
@@ -187,7 +208,10 @@ function App() {
                     </div>
                     <div className="popover-column">
                       <span>{song.length || '-'}</span>
-                      <span>{song.release_date || '-'}</span>
+                      <span style={{textAlign: 'right'}}>
+                        {song.release_date || '-'}
+                        {song.apd && <div>(apd){song.apd}</div>}
+                      </span>
                     </div>
                   </div>
                 )}
