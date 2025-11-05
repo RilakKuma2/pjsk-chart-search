@@ -62,7 +62,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .filter-label { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; color: white; font-weight: bold; font-size: 0.9rem; }
 .filter-label.expert { background-color: #F44336; }
 .filter-label.master { background-color: #9C27B0; }
-.filter-label.append { background: linear-gradient(45deg, #9C27B0, #18ffff); }
+.filter-label.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); }
 .filter-group select { padding: 0.6rem; background-color: var(--card-bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 5px; font-size: 1rem; }
 .song-list { display: flex; flex-direction: column; gap: 0.75rem; }
 .song-item { position: relative; display: flex; align-items: center; background-color: var(--card-bg-color); border-radius: 12px; padding: 10px; border-bottom: 1px solid var(--border-color); }
@@ -83,15 +83,22 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .title-jp { font-size: 0.9rem; color: var(--text-color-light-gray); margin-left: 0.75rem; }
 .song-bpm { font-size: 0.9rem; color: var(--text-color-light-gray); white-space: nowrap; margin-left: 1rem; }
 .difficulty-circles { display: flex; gap: 1rem; }
-.circle, .circle-placeholder { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; font-size: 1rem; text-decoration: none; transition: transform 0.2s ease; box-sizing: border-box; }
+.circle, .circle-placeholder { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; font-weight: 900; font-size: 1rem; text-decoration: none; transition: transform 0.2s ease; box-sizing: border-box; }
 .circle:hover { transform: scale(1.1); }
 .circle-placeholder { background-color: #424242; border: 1px dashed #666; }
+/*.circle.easy { background-color: #11dd77; color: #444466; border: 0px solid #8aeebc; }
+.circle.normal { background-color: #33ccff; color: #444466; border: 0px solid #9ae6ff; }
+.circle.hard { background-color: #ffcc00; color: #444466; border: 0px solid #ffe680; }
+.circle.expert { background-color: #ff4477; color: #444466; border: 0px solid #ff99b5; }
+.circle.master { background-color: #cc33ff; color: #444466; border: 0px solid #d99cef; }
+.circle.append { background: linear-gradient(to bottom right, #ad92fd, #fe7bde); color: #444466; border: 0px solid #febdf1; } 인겜과색동일 */
 .circle.easy { background-color: #4CAF50; color: white; }
 .circle.normal { background-color: #2196F3; color: white; }
 .circle.hard { background-color: #FFC107; color: white; }
 .circle.expert { background-color: #F44336; color: white; }
 .circle.master { background-color: #9C27B0; color: white; }
-.circle.append { background: linear-gradient(45deg, #9C27B0, #18ffff); color: white; }
+.circle.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); color: white; }
+
 
 .song-popover {
   position: absolute;
