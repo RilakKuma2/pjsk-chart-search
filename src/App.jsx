@@ -24,6 +24,7 @@ const DifficultyFilter = ({ diff, shorthand, value, onChange }) => {
       <div className={`filter-label ${diff}`}>{shorthand}</div>
       <select value={value} onChange={(e) => onChange(diff, e.target.value)}>
         <option value="">-</option>
+        {diff === 'append' && <option value="all">All</option>}
         {levels.map(level => (
           <option key={`${diff}_${level}`} value={level}>{level}</option>
         ))}
@@ -77,8 +78,12 @@ function App() {
       result = result.filter(song => song.levels.expert === parseInt(expertLevel));
     } else if (masterLevel) {
       result = result.filter(song => song.levels.master === parseInt(masterLevel));
-    } else if (appendLevel) {
-      result = result.filter(song => song.levels.append === parseInt(appendLevel));
+    } else if (appendLevel) { // This block is only entered if appendLevel is not ""
+      if (appendLevel === "all") {
+        result = result.filter(song => song.levels.append != null);
+      } else { // This is for a specific number
+        result = result.filter(song => song.levels.append === parseInt(appendLevel));
+      }
       
       // APD 레벨 검색 시 정렬 로직
       const getSortableDate = (song) => {
