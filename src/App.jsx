@@ -190,7 +190,7 @@ function App() {
           const cacheBuster = song.ver && song.ver !== "0" ? `?v=${song.ver}` : '';
 
           return (
-            <div key={song.id} className="song-item">
+            <div key={song.id} className="song-item" style={{'--bg-image': `url(https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster})`}}>
               <div 
                 className="song-cover-wrapper"
                 {...coverHandlers} // 이벤트 핸들러 객체 적용
