@@ -54,7 +54,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch('https://asset.rilaksekai.com/api/songs.json')
+    fetch('https://api.rilaksekai.com/api/songs')
       .then(response => { if (!response.ok) throw new Error('네트워크 응답 오류'); return response.json(); })
       .then(data => { setAllSongs(data); setFilteredSongs(data); })
       .catch(error => setError(error))
@@ -106,7 +106,7 @@ function App() {
   const difficulties = ['easy', 'normal', 'hard', 'expert', 'master', 'append'];
   
   if (isLoading) return <div className="App"><h1>로딩 중...</h1></div>;
-  if (error) return <div className="App"><h1>ios웹앱(바로가기)면 재설치: {error.message}</h1></div>;
+  if (error) return <div className="App"><h1>캐시삭제/ios웹앱(바로가기)면 재설치: {error.message}</h1></div>;
 
   return (
     <div className="App">
