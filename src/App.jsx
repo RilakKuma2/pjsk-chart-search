@@ -234,21 +234,34 @@ function App() {
                   )}
                 </div>
                 <div className="difficulty-circles">
-                  {difficulties.map(diff => (
-                    song.levels[diff] ? (
+                  {difficulties.map(diff => {
+                    const level = song.levels[diff];
+                    if (!level) {
+                      return <div key={diff} className="circle-placeholder"></div>;
+                    }
+
+                    let isFiltered = false;
+                    if (diff === 'expert' && expertLevel && level === parseInt(expertLevel)) isFiltered = true;
+                    if (diff === 'master' && masterLevel && level === parseInt(masterLevel)) isFiltered = true;
+                    if (diff === 'append' && appendLevel) {
+                      if (appendLevel === 'all' && level != null) isFiltered = true;
+                      if (level === parseInt(appendLevel)) isFiltered = true;
+                    }
+                    const classNames = `circle ${diff} ${isFiltered ? 'filtered' : ''}`;
+
+                    return (
                       <a 
                         key={diff} 
-                        // useWebP 상태와 cacheBuster를 함께 사용하여 링크 동적 생성
                         href={`https://asset.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className={`circle ${diff}`} 
-                        title={`${diff.charAt(0).toUpperCase() + diff.slice(1)}: ${song.levels[diff]}`}
+                        className={classNames} 
+                        title={`${diff.charAt(0).toUpperCase() + diff.slice(1)}: ${level}`}
                       >
-                        {song.levels[diff]}
+                        {level}
                       </a>
-                    ) : (<div key={diff} className="circle-placeholder"></div>)
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

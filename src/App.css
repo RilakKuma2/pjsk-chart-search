@@ -5,7 +5,7 @@
   --text-color: rgba(255, 255, 255, 0.87);
   --border-color: #444;
   --accent-color: #646cff;
-  --text-color-light-gray: #aaa;
+  --text-color-light-gray: #ccc;
   --unit-color-vs: #aaaaaa;
   --unit-color-ln: #4455DD;
   --unit-color-mmj: #88DD44;
@@ -63,9 +63,18 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .filter-label.expert { background-color: #F44336; }
 .filter-label.master { background-color: #9C27B0; }
 .filter-label.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); }
-.filter-group select { padding: 0.6rem; background-color: var(--card-bg-color); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 5px; font-size: 1rem; }
+.filter-group select { 
+  /* original background-color: var(--card-bg-color); */
+  /* original color: var(--text-color); */
+  padding: 0.6rem; 
+  background-color: transparent; 
+  border: 1px solid var(--border-color); 
+  color: white; 
+  border-radius: 5px; 
+  font-size: 1rem; 
+}
 .song-list { display: flex; flex-direction: column; gap: 0.75rem; }
-.song-item { position: relative; display: flex; align-items: center; background-color: var(--card-bg-color); border-radius: 12px; padding: 10px; border-bottom: 1px solid var(--border-color); }
+.song-item { position: relative; display: flex; align-items: center; background-color: #5c5c7d; border-radius: 12px; padding: 10px; border-bottom: 1px solid var(--border-color); }
 .song-cover-wrapper { position: relative; flex-shrink: 0; cursor: pointer; }
 .song-cover { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 3px solid transparent; box-sizing: border-box; }
 .unit-border-VS { border-color: var(--unit-color-vs); }
@@ -85,19 +94,35 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .difficulty-circles { display: flex; gap: 1rem; }
 .circle, .circle-placeholder { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; font-weight: 900; font-size: 1rem; text-decoration: none; transition: transform 0.2s ease; box-sizing: border-box; }
 .circle:hover { transform: scale(1.1); }
-.circle-placeholder { background-color: #424242; border: 1px dashed #666; }
-/*.circle.easy { background-color: #11dd77; color: #444466; border: 0px solid #8aeebc; }
-.circle.normal { background-color: #33ccff; color: #444466; border: 0px solid #9ae6ff; }
-.circle.hard { background-color: #ffcc00; color: #444466; border: 0px solid #ffe680; }
-.circle.expert { background-color: #ff4477; color: #444466; border: 0px solid #ff99b5; }
-.circle.master { background-color: #cc33ff; color: #444466; border: 0px solid #d99cef; }
-.circle.append { background: linear-gradient(to bottom right, #ad92fd, #fe7bde); color: #444466; border: 0px solid #febdf1; } 인겜과색동일 */
-.circle.easy { background-color: #4CAF50; color: white; }
+.circle-placeholder { background-color: #5c5c7d; border: 1px dashed #666; }
+/*.circle.easy { background-color: #11dd77; color: #444466; border: 3px solid #8aeebc; }
+.circle.normal { background-color: #33ccff; color: #444466; border: 3px solid #9ae6ff; }
+.circle.hard { background-color: #ffcc00; color: #444466; border: 3px solid #ffe680; }
+.circle.expert { background-color: #ff4477; color: #444466; border: 3px solid #ff99b5; }
+.circle.master { background-color: #cc33ff; color: #444466; border: 3px solid #d99cef; }
+.circle.append { background: linear-gradient(to bottom right, #ad92fd, #fe7bde); color: #444466; border: 3px solid #febdf1; }*/
+
+/* Hover/Active/Filtered Styles */
+.circle.easy:hover, .circle.easy:active, .circle.easy.filtered { background-color: #11dd77; color: #444466; border: 3.5px solid #8aeebc; box-shadow: 0 0 8px 2px #8f8e91; }
+.circle.normal:hover, .circle.normal:active, .circle.normal.filtered { background-color: #33ccff; color: #444466; border: 3.5px solid #9ae6ff; box-shadow: 0 0 8px 2px #8f8e91; }
+.circle.hard:hover, .circle.hard:active, .circle.hard.filtered { background-color: #ffcc00; color: #444466; border: 3.5px solid #ffe680; box-shadow: 0 0 8px 2px #8f8e91; }
+.circle.expert:hover, .circle.expert:active, .circle.expert.filtered { background-color: #ff4477; color: #444466; border: 3.5px solid #ff99b5; box-shadow: 0 0 8px 2px #8f8e91; }
+.circle.master:hover, .circle.master:active, .circle.master.filtered { background-color: #cc33ff; color: #444466; border: 3.5px solid #d99cef; box-shadow: 0 0 8px 2px #8f8e91; }
+.circle.append:hover, .circle.append:active, .circle.append.filtered { background: linear-gradient(to bottom right, #ad92fd, #fe7bde); color: #444466; border: 3.5px solid #febdf1; box-shadow: 0 0 8px 2px #8f8e91; }
+
+.circle.easy { color: white; border: 3.5px solid #13d675; }
+.circle.normal { color: white; border: 3.5px solid #33ccff; }
+.circle.hard { color: white; border: 3.5px solid #ffcc00; }
+.circle.expert { color: white; border: 3.5px solid #ff4179; }
+.circle.master { color: white; border: 3.5px solid #cb34ff; }
+.circle.append { color: white; border: 3.5px solid #febdf1; }
+
+/*.circle.easy { background-color: #4CAF50; color: white; }
 .circle.normal { background-color: #2196F3; color: white; }
 .circle.hard { background-color: #FFC107; color: white; }
 .circle.expert { background-color: #F44336; color: white; }
 .circle.master { background-color: #9C27B0; color: white; }
-.circle.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); color: white; }
+.circle.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); color: white; }*/
 
 
 .song-popover {
