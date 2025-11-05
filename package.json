@@ -6,7 +6,7 @@
   "homepage": "https://RilakKuma2.github.io/pjsk-chart-search",
   "scripts": {
     "start": "vite",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
