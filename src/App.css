@@ -64,8 +64,8 @@ body::after {
 
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0rem; gap: 1rem; }
 .title-image { max-width: 250px; height: auto; flex-shrink: 2; }
-.calculator-button { background-color: #cfccd7; color: #434367; padding: 0.6rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 900; white-space: nowrap; transition: background-color 0.2s ease; font-family: 'Noto Sans KR', sans-serif; display: flex; align-items: center; justify-content: center; }
-.calculator-button:hover { background-color: #444466;color: #d1ced5; }
+.calculator-button { background-color: #eaebf3; color: #434367; padding: 0.6rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 900; white-space: nowrap; transition: background-color 0.2s ease; font-family: 'Noto Sans KR', sans-serif; display: flex; align-items: center; justify-content: center; }
+.calculator-button:hover { background-color: #444466;color: #eaebf3; }
 /* filter-bar의 아래쪽 여백 조정 */
 .filter-bar { 
   display: flex; 
@@ -85,6 +85,10 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 }
 
 /* WebP/SVG 토글 체크박스 스타일 */
+.lang-jp .format-toggle {
+  font-weight: 600;
+}
+
 .format-toggle {
   display: flex;
   align-items: center;
@@ -242,7 +246,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  font-weight: 300;
+  font-weight: 200;
 }
 .popover-column span {
   white-space: nowrap;
@@ -306,9 +310,9 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 }
 
 .options-button {
-  background-color: #cfccd7;
+  background-color: #eaebf3;
   border: none;
-  padding: 4.5px 8px 2.2px 8px; /* Reduced vertical padding */
+  padding: 5px 8px 1.3px 8px; /* Reduced vertical padding */
   border-radius: 8px; /* Added border-radius for rounded corners */
   cursor: pointer;
 }
@@ -316,6 +320,10 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .options-button img {
   width: 32px;
   height: 32px;
+}
+
+.lang-jp .options-window {
+  font-weight: 900;
 }
 
 .options-window {
@@ -359,7 +367,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 }
 
 .bg-toggle-btn {
-  background-color: #cfccd7;
+  background-color: #eaebf3;
   border: none;
   padding: 8px 12px;
   border-radius: 8px;
@@ -428,7 +436,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 }
 
 .reset-opacity-btn {
-  background-color: #cfccd7;
+  background-color: #eaebf3;
   border: none;
   padding: 4px 8px;
   border-radius: 8px;
