@@ -253,7 +253,7 @@ function App() {
   if (error) return <div className="App"><h1>{text.error}{error.message}</h1></div>;
 
   return (
-    <div className="App">
+    <div className={`App ${language === 'jp' ? 'lang-jp' : ''}`}>
       <header>
         <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
         <a href="https://rilakkuma2.github.io/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
