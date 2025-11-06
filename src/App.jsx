@@ -263,7 +263,7 @@ function App() {
 
       <div className="options-container">
         <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="options-button">
-          <img src="/option.webp" alt="Options" />
+          <img src="/option.webp?=v2" alt="Options" />
         </button>
         {isOptionsOpen && (
           <div className="options-window">
