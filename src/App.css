@@ -51,6 +51,7 @@ body::after {
   background-size: 100% 100%, 4px 4px, 4px 4px;
   background-position: 0 0, 0 0, 2px 2px;
   z-index: -1;
+  opacity: var(--background-opacity, 0.8);
 }
 
 
@@ -345,6 +346,79 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   font-weight: bold;
   border-radius: 5px;
   font-size: 0.9rem;
+}
+
+.opacity-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem; /* Space below it */
+  font-size: 0.8rem;
+  color: white;
+}
+
+.opacity-control {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 0.5rem;
+}
+
+.opacity-slider-container input[type="range"] {
+  flex-grow: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 4px;
+}
+
+.opacity-slider-container input[type="range"]:hover {
+  opacity: 1;
+}
+
+.opacity-slider-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+}
+
+.opacity-slider-container input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+}
+
+.reset-opacity-btn {
+  background-color: #cfccd7;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #333;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; /* Fixed width for icon */
+  height: 32px; /* Fixed height for icon */
+  flex-shrink: 0;
+}
+
+.reset-opacity-btn:hover {
+  background-color: #c0c0c0;
 }
 
 .background-selector {

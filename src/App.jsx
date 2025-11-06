@@ -28,6 +28,7 @@ const UI_TEXT = {
     error: "캐시삭제/ios웹앱(바로가기)면 재설치: ",
     noResults: "검색 결과가 없습니다.",
     bgTitle: "배경화면 설정",
+    bgOpacity: "배경화면 투명도",
     disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다."
   },
   jp: {
@@ -38,6 +39,7 @@ const UI_TEXT = {
     error: "キャッシュを削除するか、再インストールしてください: ",
     noResults: "検索結果がありません。",
     bgTitle: "背景設定",
+    bgOpacity: "背景の透明度",
     hideKoreanSubTitle: "韓国語の曲名を隠す",
     disclaimer: "このウェブサイトはファンメイドのサイトであり、すべての権利は<br className=\"br-pc\"/>Sega、Colorful Palette、Cryptonを含む<br className=\"br-pc\"/>資料の正当な所有者に帰属します。"
   }
@@ -120,6 +122,10 @@ function App() {
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'ko');
   const [background, setBackground] = useState(() => localStorage.getItem('background') || '/bg.webp');
   const [hideKoreanSubTitle, setHideKoreanSubTitle] = useState(() => localStorage.getItem('hideKoreanSubTitle') === 'true');
+  const [backgroundOpacity, setBackgroundOpacity] = useState(() => {
+    const storedOpacity = localStorage.getItem('backgroundOpacity');
+    return storedOpacity !== null ? parseInt(storedOpacity, 10) : 80;
+  });
 
   const [useWebP, setUseWebP] = useState(() => {
     const storedValue = localStorage.getItem('useWebP');
@@ -145,6 +151,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem('hideKoreanSubTitle', hideKoreanSubTitle);
   }, [hideKoreanSubTitle]);
+
+  useEffect(() => {
+    localStorage.setItem('backgroundOpacity', backgroundOpacity);
+    document.body.style.setProperty('--background-opacity', backgroundOpacity / 100);
+  }, [backgroundOpacity]);
 
   useEffect(() => {
     if (background) {
@@ -283,6 +294,22 @@ function App() {
                 <label htmlFor="hide-ko-sub-toggle">{text.hideKoreanSubTitle}</label>
               </div>
             )}
+            <div className="opacity-slider-container">
+              <label htmlFor="opacity-slider">{text.bgOpacity}</label>
+              <div className="opacity-control">
+                <input
+                  type="range"
+                  id="opacity-slider"
+                  min="0"
+                  max="100"
+                  value={backgroundOpacity}
+                  onChange={(e) => setBackgroundOpacity(parseInt(e.target.value, 10))}
+                />
+                <button className="reset-opacity-btn" onClick={() => setBackgroundOpacity(80)} title="Reset opacity">
+                  ↺
+                </button>
+              </div>
+            </div>
             <BackgroundSelector setBackground={setBackground} language={language} />
             <p className="disclaimer-text" dangerouslySetInnerHTML={{ __html: text.disclaimer }} />
           </div>
