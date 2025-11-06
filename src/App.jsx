@@ -12,6 +12,32 @@ const UNIT_NAME_MAP = {
   "Unk": "버싱"
 };
 
+const CLASS_MAP_JP = {
+  "기존곡": "既存曲",
+  "공모전": "公募展",
+  "하코곡": "書き下ろし",
+  "커버곡" : "カバー"
+};
+
+const UI_TEXT = {
+  ko: {
+    searchPlaceholder: "곡명 또는 작곡가로 검색 (한/일)",
+    svgOption: "svg 파일로 채보 보기<br>※텍스트 검색 가능하나 일부 애드블록에서 긴 로딩",
+    calculator: "프로세카 계산기",
+    loading: "로딩 중...",
+    error: "캐시삭제/ios웹앱(바로가기)면 재설치: ",
+    noResults: "검색 결과가 없습니다."
+  },
+  jp: {
+    searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
+    svgOption: "SVGファイルで譜面を見る<br>※テキスト検索可能、一部広告ブロックで長いローディング",
+    calculator: "プロセカ計算機",
+    loading: "ローディング中...",
+    error: "キャッシュを削除するか、再インストールしてください: ",
+    noResults: "検索結果がありません。"
+  }
+};
+
 const DifficultyFilter = ({ diff, shorthand, value, onChange }) => {
   let start, end;
   if (diff === 'expert') { start = 21; end = 31; } 
@@ -44,6 +70,7 @@ function App() {
   const [error, setError] = useState(null);
   const [activeSongId, setActiveSongId] = useState(null);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const [language, setLanguage] = useState('ko');
 
   // WebP 채보 사용 여부를 localStorage에서 불러와 초기 상태로 설정
   const [useWebP, setUseWebP] = useState(() => {
@@ -132,16 +159,17 @@ function App() {
   };
 
   const difficulties = ['easy', 'normal', 'hard', 'expert', 'master', 'append'];
-  
-  if (isLoading) return <div className="App"><h1>로딩 중...</h1></div>;
-  if (error) return <div className="App"><h1>캐시삭제/ios웹앱(바로가기)면 재설치: {error.message}</h1></div>;
+  const text = UI_TEXT[language];
+
+  if (isLoading) return <div className="App"><h1>{text.loading}</h1></div>;
+  if (error) return <div className="App"><h1>{text.error}{error.message}</h1></div>;
 
   return (
     <div className="App">
       <header>
         <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
         <a href="https://rilaksekai.com/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
-          프로세카 계산기
+          {text.calculator}
         </a>
       </header>
 
@@ -151,6 +179,13 @@ function App() {
         </button>
         {isOptionsOpen && (
           <div className="options-window">
+            <div className="language-selector">
+              <span>🌐</span>
+              <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+                <option value="ko">🇰🇷한국어</option>
+                <option value="jp">🇯🇵日本語</option>
+              </select>
+            </div>
             <div className="format-toggle">
               <input
                 type="checkbox"
@@ -158,7 +193,7 @@ function App() {
                 checked={!useWebP}
                 onChange={(e) => setUseWebP(!e.target.checked)}
               />
-              <label htmlFor="webp-toggle">svg 파일로 채보 보기<br></br>※텍스트 검색 가능하나 일부 애드블록에서 긴 로딩</label>
+              <label htmlFor="webp-toggle" dangerouslySetInnerHTML={{ __html: text.svgOption }} />
             </div>
           </div>
         )}
@@ -167,7 +202,7 @@ function App() {
       <div className="filter-bar">
         <input 
           type="text" 
-          placeholder="곡명 또는 작곡가로 검색 (한/일)" 
+          placeholder={text.searchPlaceholder}
           value={searchTerm} 
           onChange={(e) => setSearchTerm(e.target.value)} 
           className="search-input" 
@@ -181,44 +216,49 @@ function App() {
 
       <div className="song-list">
         {filteredSongs.map(song => {
-          // 이벤트 핸들러를 담을 객체 생성
           const coverHandlers = {
             onClick: (e) => {
-              e.stopPropagation(); // 외부 클릭 감지 이벤트 전파 방지
+              e.stopPropagation();
               setActiveSongId(prevId => (prevId === song.id ? null : song.id));
             }
           };
 
-          // 터치 기기가 아닐 때만 마우스 오버/아웃 이벤트 추가
           if (!isTouchDevice) {
             coverHandlers.onMouseEnter = () => setActiveSongId(song.id);
             coverHandlers.onMouseLeave = () => setActiveSongId(null);
           }
           
-          // ver 필드를 기반으로 캐시 버스팅 문자열 생성
           const cacheBuster = song.ver && song.ver !== "0" ? `?v=${song.ver}` : '';
+
+          const isJapanese = language === 'jp';
+          const title = isJapanese ? song.title_jp : song.title_ko;
+          const subTitle = isJapanese ? song.title_ko : song.title_jp;
+          const composer = isJapanese ? song.composer_jp : song.composer;
+          const unit = isJapanese ? song.unit_code : (UNIT_NAME_MAP[song.unit_code] || song.unit_code);
+          const mvType = isJapanese && song.mv_type === '원곡' ? '原曲' : song.mv_type;
+          const classification = isJapanese ? (CLASS_MAP_JP[song.classification] || song.classification) : song.classification;
 
           return (
             <div key={song.id} className="song-item" style={{'--bg-image': `url(https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster})`}}>
               <div 
                 className="song-cover-wrapper"
-                {...coverHandlers} // 이벤트 핸들러 객체 적용
+                {...coverHandlers}
               >
                 <img 
                   loading="lazy" 
                   src={`https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`} 
-                  alt={song.title_ko} 
+                  alt={title} 
                   className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`} 
                 />
                 {activeSongId === song.id && (
                   <div className="song-popover">
                      <div className="popover-column">
-                      <span>{song.classification || '-'}</span>
-                      <span>{UNIT_NAME_MAP[song.unit_code] || song.unit_code}</span>
+                      <span>{classification || '-'}</span>
+                      <span>{unit}</span>
                     </div>
                     <div className="popover-column">
-                      <span>{song.mv_type || '-'}</span>
-                      <span>{song.composer || '-'}</span>
+                      <span>{mvType || '-'}</span>
+                      <span>{composer || '-'}</span>
                     </div>
                     <div className="popover-column">
                       <span>{song.length || '-'}</span>
@@ -233,8 +273,8 @@ function App() {
               <div className="song-details">
                 <div className="song-title-row">
                   <div className="song-titles">
-                    <span className="title-ko">{song.title_ko}</span>
-                    <span className="title-jp">{song.title_jp}</span>
+                    <span className="title-ko">{title}</span>
+                    <span className="title-jp">{subTitle}</span>
                   </div>
                   {song.bpm && (
                     <span className="song-bpm">
@@ -276,7 +316,7 @@ function App() {
             </div>
           );
         })}
-        {filteredSongs.length === 0 && <p>검색 결과가 없습니다.</p>}
+        {filteredSongs.length === 0 && <p>{text.noResults}</p>}
       </div>
     </div>
   );

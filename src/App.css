@@ -298,4 +298,25 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   padding: 1rem;
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem; /* Add some space below it */
+  color: white;
+}
+
+.language-selector select {
+  padding: 0.4rem;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: #6a6a6a;
+  font-weight: bold;
+  border-radius: 5px;
+  font-size: 0.9rem;
 }
