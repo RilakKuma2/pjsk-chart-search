@@ -41,7 +41,7 @@ const UI_TEXT = {
     bgTitle: "背景設定",
     bgOpacity: "背景の透明度",
     hideKoreanSubTitle: "韓国語の曲名を隠す",
-    disclaimer: "このウェブサイトはファンメイドのサイトであり、すべての権利は<br className=\"br-pc\"/>Sega、Colorful Palette、Cryptonを含む<br className=\"br-pc\"/>資料の正当な所有者に帰属します。"
+    disclaimer: "このウェブサイトはファンメイドのサイトであり、<br className=\"br-pc\"/>すべての権利はSega、Colorful Palette、Crypton<br className=\"br-pc\"/>を含む資料の正当な所有者に帰属します。"
   }
 };
 
