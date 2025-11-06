@@ -196,6 +196,14 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .circle.master { background-color: #9C27B0; color: white; }
 .circle.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); color: white; }*/
 
+  .disclaimer-text {
+     font-size: 0.75rem; /* 작은 글꼴 크기 */
+     color: #aaa; /* 연회색 */
+     margin-top: 0rem; /* 위쪽에 여백 추가 */
+     text-align: center; /* 텍스트 중앙 정렬 */
+     word-wrap: break-word; /* 긴 텍스트 줄바꿈 */
+     overflow-wrap: break-word; /* 긴 텍스트 줄바꿈 */
+   }
 
 .song-popover {
   position: absolute;
@@ -237,6 +245,13 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   .format-toggle {
     white-space: nowrap;
   }
+  .br-pc {
+    display: block;
+  }
+}
+
+.br-pc {
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -251,7 +266,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 
   /* [추가] 모바일에서 토글 컨테이너 여백 조정 */
   .options-container {
-    margin-bottom: 1rem;
+    margin-bottom: 0rem;
     padding-right: 0.5rem; /* 오른쪽 끝에 약간의 여유 공간 */
   }
   .song-list { margin-left: -0.5rem; margin-right: -0.5rem; }
@@ -303,7 +318,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1rem 1rem 0rem 1rem; /* Reduced bottom padding */
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   min-width: 300px;
@@ -429,4 +444,9 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   .filter-group select { padding: 0.4rem; font-size: 0.9rem; }
   .difficulty-filters { gap: 0.5rem; }
   .filter-label { width: 34px; height: 34px; font-size: 0.8rem; }
+  .calculator-button {
+    width: 100%; /* Make it take full width */
+    padding: 0.5rem 1rem; /* Adjust padding */
+    font-size: 0.9rem; /* Adjust font size */
+  }
 }

@@ -27,17 +27,19 @@ const UI_TEXT = {
     loading: "로딩 중...",
     error: "캐시삭제/ios웹앱(바로가기)면 재설치: ",
     noResults: "검색 결과가 없습니다.",
-    bgTitle: "배경화면 설정"
+    bgTitle: "배경화면 설정",
+    disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다."
   },
   jp: {
-    searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
-    svgOption: "SVGファイルで譜面を見る ※テキスト検索可能/一部広告ブロックで遅いローディング",
-    calculator: "プロセカ計算機",
-    loading: "ローディング中...",
-    error: "キャッシュを削除するか、再インストールしてください: ",
-    noResults: "検索結果がありません。",
-    bgTitle: "背景設定",
-    hideKoreanSubTitle: "韓国語の曲名を隠す"
+    searchPlaceholder: "곡명 또는 작곡가로 검색 (일/한)",
+    svgOption: "SVG파일로 채보 보기    ※텍스트 검색 가능<br>※일부 광고블록에서 느린 로딩",
+    calculator: "프로세카 계산기",
+    loading: "로딩 중...",
+    error: "캐시를 삭제하거나, 재설치해주세요: ",
+    noResults: "검색 결과가 없습니다。",
+    bgTitle: "배경 설정",
+    hideKoreanSubTitle: "한국어 곡명 숨기기",
+    disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다."
   }
 };
 
@@ -282,6 +284,7 @@ function App() {
               </div>
             )}
             <BackgroundSelector setBackground={setBackground} language={language} />
+            <p className="disclaimer-text" dangerouslySetInnerHTML={{ __html: text.disclaimer }} />
           </div>
         )}
       </div>
