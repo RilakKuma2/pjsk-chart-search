@@ -1,5 +1,5 @@
 :root {
-  --bg-color: #212121;
+  --bg-color: #717292;
   --card-bg-color: #333;
   --popover-bg-color: rgba(74, 74, 74, 0.85);
   --text-color: rgba(255, 255, 255, 0.87);
@@ -234,7 +234,8 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 300;
 }
 .popover-column span {
   white-space: nowrap;
@@ -357,6 +358,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   border-radius: 8px;
   cursor: pointer;
   color: #333;
+  font-size: 0.8rem;
   font-weight: bold;
   margin-bottom: 1rem; /* Space below the button */
   width: 100%; /* Make button full width */
