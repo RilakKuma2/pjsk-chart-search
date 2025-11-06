@@ -26,7 +26,8 @@ const UI_TEXT = {
     calculator: "프로세카 계산기",
     loading: "로딩 중...",
     error: "캐시삭제/ios웹앱(바로가기)면 재설치: ",
-    noResults: "검색 결과가 없습니다."
+    noResults: "검색 결과가 없습니다.",
+    bgTitle: "배경화면 설정"
   },
   jp: {
     searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
@@ -34,8 +35,51 @@ const UI_TEXT = {
     calculator: "プロセカ計算機",
     loading: "ローディング中...",
     error: "キャッシュを削除するか、再インストールしてください: ",
-    noResults: "検索結果がありません。"
+    noResults: "検索結果がありません。",
+    bgTitle: "背景設定",
+    hideKoreanSubTitle: "韓国語の曲名を隠す"
   }
+};
+
+const PRESET_BGS = ['/bg.webp', ...Array.from({ length: 18 }, (_, i) => `/bg${i + 1}.webp`)];
+
+const BackgroundSelector = ({ setBackground, language }) => {
+  const [showBackgroundOptions, setShowBackgroundOptions] = useState(false);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imgDataUrl = event.target.result;
+      setBackground(imgDataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div className="background-selector">
+      <button className="bg-toggle-btn" onClick={() => setShowBackgroundOptions(!showBackgroundOptions)}>
+        {UI_TEXT[language].bgTitle}
+      </button>
+      {showBackgroundOptions && (
+        <div className="bg-options-content">
+          <div className="preset-grid">
+            {PRESET_BGS.map(bg => (
+              <button key={bg} className="preset-item" onClick={() => setBackground(bg)}>
+                <img src={bg} alt={`preset ${bg}`} />
+              </button>
+            ))}
+            <label htmlFor="bg-upload" className="preset-item upload-btn">
+              +
+              <input id="bg-upload" type="file" accept="image/*" onChange={handleImageUpload} />
+            </label>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 const DifficultyFilter = ({ diff, shorthand, value, onChange }) => {
@@ -70,15 +114,16 @@ function App() {
   const [error, setError] = useState(null);
   const [activeSongId, setActiveSongId] = useState(null);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const [language, setLanguage] = useState('ko');
+  
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'ko');
+  const [background, setBackground] = useState(() => localStorage.getItem('background') || '/bg.webp');
+  const [hideKoreanSubTitle, setHideKoreanSubTitle] = useState(() => localStorage.getItem('hideKoreanSubTitle') === 'true');
 
-  // WebP 채보 사용 여부를 localStorage에서 불러와 초기 상태로 설정
   const [useWebP, setUseWebP] = useState(() => {
     const storedValue = localStorage.getItem('useWebP');
     return storedValue === null ? true : storedValue === 'true';
   });
 
-  // 터치 기기인지 여부를 앱 로딩 시 한 번만 확인
   const isTouchDevice = useMemo(() => {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }, []);
@@ -90,6 +135,40 @@ function App() {
       .catch(error => setError(error))
       .finally(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
+
+  useEffect(() => {
+    localStorage.setItem('hideKoreanSubTitle', hideKoreanSubTitle);
+  }, [hideKoreanSubTitle]);
+
+  useEffect(() => {
+    if (background) {
+      if (background.startsWith('data:image')) {
+        const img = new Image();
+        img.src = background;
+        img.onload = () => {
+          localStorage.setItem('background', background);
+          document.body.style.setProperty('--background-image', `url(${background})`);
+        };
+        img.onerror = () => {
+          localStorage.removeItem('background');
+          const defaultBg = '/bg.webp';
+          setBackground(defaultBg);
+          document.body.style.setProperty('--background-image', `url(${defaultBg})`);
+        };
+      } else {
+        localStorage.setItem('background', background);
+        document.body.style.setProperty('--background-image', `url(${background})`);
+      }
+    } else {
+      const defaultBg = '/bg.webp';
+      setBackground(defaultBg);
+      document.body.style.setProperty('--background-image', `url(${defaultBg})`);
+    }
+  }, [background]);
 
   useEffect(() => {
     let result = allSongs;
@@ -107,23 +186,20 @@ function App() {
       result = result.filter(song => song.levels.expert === parseInt(expertLevel));
     } else if (masterLevel) {
       result = result.filter(song => song.levels.master === parseInt(masterLevel));
-    } else if (appendLevel) { // This block is only entered if appendLevel is not ""
+    } else if (appendLevel) {
       if (appendLevel === "all") {
         result = result.filter(song => song.levels.append != null);
-      } else { // This is for a specific number
+      } else {
         result = result.filter(song => song.levels.append === parseInt(appendLevel));
       }
       
-      // (APD) 레벨 검색 시 정렬 로직
       const getSortableDate = (song) => {
         let dateStr;
         if (song.apd) {
-          // apd는 'yy/mm/dd' 형식이므로 '20'을 앞에 붙여 'yyyy/mm/dd'로 만듭니다.
           dateStr = `20${song.apd}`;
         } else {
           dateStr = song.release_date;
         }
-        // 날짜 문자열이 유효하지 않으면 아주 오래된 날짜를 반환하여 정렬 시 뒤로 보냅니다.
         if (!dateStr) return new Date(0);
         return new Date(dateStr);
       };
@@ -144,7 +220,6 @@ function App() {
     };
   }, []);
 
-  // useWebP 상태가 변경될 때마다 localStorage에 저장
   useEffect(() => {
     localStorage.setItem('useWebP', useWebP);
   }, [useWebP]);
@@ -195,6 +270,18 @@ function App() {
               />
               <label htmlFor="webp-toggle" dangerouslySetInnerHTML={{ __html: text.svgOption }} />
             </div>
+            {language === 'jp' && (
+              <div className="format-toggle">
+                <input
+                  type="checkbox"
+                  id="hide-ko-sub-toggle"
+                  checked={hideKoreanSubTitle}
+                  onChange={(e) => setHideKoreanSubTitle(e.target.checked)}
+                />
+                <label htmlFor="hide-ko-sub-toggle">{text.hideKoreanSubTitle}</label>
+              </div>
+            )}
+            <BackgroundSelector setBackground={setBackground} language={language} />
           </div>
         )}
       </div>
@@ -274,7 +361,7 @@ function App() {
                 <div className="song-title-row">
                   <div className="song-titles">
                     <span className="title-ko">{title}</span>
-                    <span className="title-jp">{subTitle}</span>
+                    {!(isJapanese && hideKoreanSubTitle) && <span className="title-jp">{subTitle}</span>}
                   </div>
                   {song.bpm && (
                     <span className="song-bpm">
