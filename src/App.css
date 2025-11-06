@@ -17,7 +17,7 @@
 }
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   position: relative;
@@ -57,8 +57,8 @@ body::after {
 .App { max-width: 900px; margin: 0 auto; padding: 1.5rem; position: relative; z-index: 1; }
 header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0rem; gap: 1rem; }
 .title-image { max-width: 250px; height: auto; flex-shrink: 2; }
-.calculator-button { background-color: var(--accent-color); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: bold; white-space: nowrap; transition: background-color 0.2s ease; }
-.calculator-button:hover { background-color: #535bf2; }
+.calculator-button { background-color: #cfccd7; color: #434367; padding: 0.6rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 900; white-space: nowrap; transition: background-color 0.2s ease; font-family: 'Noto Sans KR', sans-serif; display: flex; align-items: center; justify-content: center; }
+.calculator-button:hover { background-color: #444466;color: #d1ced5; }
 /* filter-bar의 아래쪽 여백 조정 */
 .filter-bar { 
   display: flex; 
@@ -82,8 +82,8 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 500;
+  font-size: 0.8rem;
   color: #ffffff;
 }
 .format-toggle input[type="checkbox"] {
@@ -273,8 +273,8 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   .song-cover-wrapper, .song-cover { width: 60px; height: 60px; }
   .song-details { padding: 0 0.75rem; gap: 0.5rem; min-width: 0; }
   .song-titles { flex-shrink: 1; min-width: 0; }
-  .title-ko { font-size: 1rem; white-space: normal; }
-  .title-jp, .song-bpm { font-size: 0.8rem; margin-left: 0.5rem; }
+  .title-ko { font-size: 0.9rem; white-space: normal; }
+  .title-jp, .song-bpm { font-size: 0.75rem; margin-left: 0.5rem; }
   .song-bpm { flex-shrink: 0; }
   .format-toggle {
     white-space: normal; /* Allow text to wrap on mobile */
@@ -294,13 +294,13 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   position: relative;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .options-button {
   background-color: #cfccd7;
   border: none;
-  padding: 4px 8px; /* Reduced vertical padding */
+  padding: 4.5px 8px 2.2px 8px; /* Reduced vertical padding */
   border-radius: 8px; /* Added border-radius for rounded corners */
   cursor: pointer;
 }
