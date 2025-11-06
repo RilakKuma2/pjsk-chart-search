@@ -31,7 +31,7 @@ const UI_TEXT = {
   },
   jp: {
     searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
-    svgOption: "SVGファイルで譜面を見る<br>※テキスト検索可能、一部広告ブロックで長いローディング",
+    svgOption: "SVGファイルで譜面を見る ※テキスト検索可能/一部広告ブロックで遅いローディング",
     calculator: "プロセカ計算機",
     loading: "ローディング中...",
     error: "キャッシュを削除するか、再インストールしてください: ",
@@ -243,7 +243,7 @@ function App() {
     <div className="App">
       <header>
         <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
-        <a href="https://rilaksekai.com/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
+        <a href="https://rilakkuma2.github.io/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
           {text.calculator}
         </a>
       </header>
@@ -372,6 +372,9 @@ function App() {
                 <div className="difficulty-circles">
                   {difficulties.map(diff => {
                     const level = song.levels[diff];
+                    if (diff === 'append' && !level) {
+                      return null; // Don't render anything for append if it doesn't exist
+                    }
                     if (!level) {
                       return <div key={diff} className="circle-placeholder"></div>;
                     }

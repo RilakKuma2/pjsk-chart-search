@@ -48,8 +48,8 @@ body::after {
     linear-gradient(to bottom, rgba(129, 126, 170, 0.8), rgba(92, 92, 125, 0.3) 50%, rgba(92, 92, 125, 0.8)),
     radial-gradient(circle at center, #afb5d5 0%, #adaac3 1.25px, transparent 1.25px),
     radial-gradient(circle at center, #afb5d5 0%, #adaac3 1.25px, transparent 1.25px);
-  background-size: 100% 100%, 5px 5px, 5px 5px;
-  background-position: 0 0, 0 0, 2.5px 2.5px;
+  background-size: 100% 100%, 4px 4px, 4px 4px;
+  background-position: 0 0, 0 0, 2px 2px;
   z-index: -1;
 }
 
@@ -85,7 +85,6 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   font-weight: 600;
   font-size: 0.9rem;
   color: #ffffff;
-  white-space: nowrap;
 }
 .format-toggle input[type="checkbox"] {
   width: 16px;
@@ -234,6 +233,12 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 }
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
+@media (min-width: 769px) {
+  .format-toggle {
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 768px) {
   .App { padding: 1rem; }
   .title-image { max-width: 180px; }
@@ -256,6 +261,9 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   .title-ko { font-size: 1rem; white-space: normal; }
   .title-jp, .song-bpm { font-size: 0.8rem; margin-left: 0.5rem; }
   .song-bpm { flex-shrink: 0; }
+  .format-toggle {
+    white-space: normal; /* Allow text to wrap on mobile */
+  }
 /*  .difficulty-circles {    display: flex;    width: 100%;    justify-content: space-between;    gap: 0;  } */
   .difficulty-circles { gap: 0.75rem; flex-wrap: wrap; }
   .circle, .circle-placeholder { width: 35px; height: 35px; font-size: 0.95rem; }
@@ -277,7 +285,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .options-button {
   background-color: #cfccd7;
   border: none;
-  padding: 8px; /* Added padding */
+  padding: 4px 8px; /* Reduced vertical padding */
   border-radius: 8px; /* Added border-radius for rounded corners */
   cursor: pointer;
 }
@@ -299,8 +307,10 @@ header { display: flex; justify-content: space-between; align-items: center; mar
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   min-width: 300px;
+  max-width: 95vw; /* Prevent overflow */
   display: flex;
   flex-direction: column;
+  gap: 0.5rem; /* Increased gap between selectors */
 }
 
 .language-selector {
@@ -394,4 +404,29 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 
 .upload-btn input[type="file"] {
   display: none;
+}
+
+@media (max-width: 375px) {
+  .search-input { padding: 0.7rem; }
+  .filter-group select { padding: 0.5rem; }
+  .difficulty-filters { gap: 0.8rem; }
+}
+
+@media (max-width: 360px) {
+  .options-window .format-toggle label {
+    white-space: normal; /* Allow text to wrap */
+    font-size: 0.8rem;
+  }
+
+  .options-window .language-selector,
+  .options-window .bg-toggle-btn {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .search-input { padding: 0.6rem; font-size: 0.9rem; }
+  .filter-group select { padding: 0.4rem; font-size: 0.9rem; }
+  .difficulty-filters { gap: 0.5rem; }
+  .filter-label { width: 34px; height: 34px; font-size: 0.8rem; }
 }
