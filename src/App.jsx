@@ -43,11 +43,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeSongId, setActiveSongId] = useState(null);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
   // WebP 채보 사용 여부를 localStorage에서 불러와 초기 상태로 설정
-  const [useWebP, setUseWebP] = useState(
-    () => localStorage.getItem('useWebP') === 'true'
-  );
+  const [useWebP, setUseWebP] = useState(() => {
+    const storedValue = localStorage.getItem('useWebP');
+    return storedValue === null ? true : storedValue === 'true';
+  });
 
   // 터치 기기인지 여부를 앱 로딩 시 한 번만 확인
   const isTouchDevice = useMemo(() => {
@@ -65,12 +67,12 @@ function App() {
   useEffect(() => {
     let result = allSongs;
     if (searchTerm) {
-      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      const normalizedSearchTerm = searchTerm.toLowerCase().replace(/\s/g, '');
       result = result.filter(song =>
-        (song.title_ko && song.title_ko.toLowerCase().includes(lowerCaseSearchTerm)) ||
-        (song.title_jp && song.title_jp.toLowerCase().includes(lowerCaseSearchTerm)) ||
-        (song.composer && song.composer.toLowerCase().includes(lowerCaseSearchTerm)) ||
-        (song.composer_jp && song.composer_jp.toLowerCase().includes(lowerCaseSearchTerm))
+        (song.title_ko && song.title_ko.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
+        (song.title_jp && song.title_jp.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
+        (song.composer && song.composer.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
+        (song.composer_jp && song.composer_jp.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm))
       );
     }
 
@@ -85,7 +87,7 @@ function App() {
         result = result.filter(song => song.levels.append === parseInt(appendLevel));
       }
       
-      // APD 레벨 검색 시 정렬 로직
+      // (APD) 레벨 검색 시 정렬 로직
       const getSortableDate = (song) => {
         let dateStr;
         if (song.apd) {
@@ -138,21 +140,28 @@ function App() {
     <div className="App">
       <header>
         <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
-        <a href="https://rilakkuma2.github.io/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
+        <a href="https://rilaksekai.com/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
           프로세카 계산기
         </a>
       </header>
 
-      <div className="format-toggle-container">
-        <div className="format-toggle">
-          <input
-            type="checkbox"
-            id="webp-toggle"
-            checked={useWebP}
-            onChange={(e) => setUseWebP(e.target.checked)}
-          />
-          <label htmlFor="webp-toggle">이미지 파일로 채보 보기(로딩 느릴 시 체크)</label>
-        </div>
+      <div className="options-container">
+        <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="options-button">
+          <img src="/option.webp" alt="Options" />
+        </button>
+        {isOptionsOpen && (
+          <div className="options-window">
+            <div className="format-toggle">
+              <input
+                type="checkbox"
+                id="webp-toggle"
+                checked={!useWebP}
+                onChange={(e) => setUseWebP(!e.target.checked)}
+              />
+              <label htmlFor="webp-toggle">svg 파일로 채보 보기<br></br>※텍스트 검색 가능하나 일부 애드블록에서 긴 로딩</label>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="filter-bar">
@@ -215,7 +224,7 @@ function App() {
                       <span>{song.length || '-'}</span>
                       <span style={{textAlign: 'right'}}>
                         {song.release_date || '-'}
-                        {song.apd && <div>(apd){song.apd}</div>}
+                        {song.apd && <div>(APD) {song.apd}</div>}
                       </span>
                     </div>
                   </div>
