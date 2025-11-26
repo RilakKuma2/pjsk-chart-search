@@ -30,7 +30,8 @@ const UI_TEXT = {
     noResults: "검색 결과가 없습니다.",
     bgTitle: "배경화면 설정",
     bgOpacity: "배경화면 투명도",
-    disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다."
+    disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다.",
+    mirrorMode: "미러 모드"
   },
   jp: {
     searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
@@ -42,7 +43,8 @@ const UI_TEXT = {
     bgTitle: "背景設定",
     bgOpacity: "背景の透明度",
     hideKoreanSubTitle: "韓国語の曲名を隠す",
-    disclaimer: "このウェブサイトはファンメイドのサイトであり、<br className=\"br-pc\"/>すべての権利はSega、Colorful Palette、Crypton<br className=\"br-pc\"/>を含む資料の正当な所有者に帰属します。"
+    disclaimer: "このウェブサイトはファンメイドのサイトであり、<br className=\"br-pc\"/>すべての権利はSega、Colorful Palette、Crypton<br className=\"br-pc\"/>を含む資料の正当な所有者に帰属します。",
+    mirrorMode: "ミラーモード"
   }
 };
 
@@ -140,6 +142,11 @@ function App() {
     return storedValue === null ? true : storedValue === 'true';
   });
 
+  const [isMirrorMode, setIsMirrorMode] = useState(() => {
+    const storedValue = localStorage.getItem('isMirrorMode');
+    return storedValue === null ? false : storedValue === 'true';
+  });
+
   const isTouchDevice = useMemo(() => {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }, []);
@@ -191,6 +198,10 @@ function App() {
     localStorage.setItem('backgroundOpacity', backgroundOpacity);
     document.body.style.setProperty('--background-opacity', backgroundOpacity / 100);
   }, [backgroundOpacity]);
+
+  useEffect(() => {
+    localStorage.setItem('isMirrorMode', isMirrorMode);
+  }, [isMirrorMode]);
 
   useEffect(() => {
     if (background) {
@@ -312,71 +323,7 @@ function App() {
         </a>
       </header>
 
-      <div className="options-container">
-        <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="options-button">
-          <img src="/option.webp?=v2" alt="Options" />
-        </button>
-        {isOptionsOpen && (
-          <div className="options-window">
-            <div className="language-selector">
-              <span>🌐</span>
-              <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-                <option value="ko">🇰🇷한국어</option>
-                <option value="jp">🇯🇵日本語</option>
-              </select>
-            </div>
-            <div className="format-toggle">
-              <input
-                type="checkbox"
-                id="webp-toggle"
-                checked={!useWebP}
-                onChange={(e) => setUseWebP(!e.target.checked)}
-              />
-              <label htmlFor="webp-toggle" dangerouslySetInnerHTML={{ __html: text.svgOption }} />
-            </div>
-            {language === 'jp' && (
-              <div className="format-toggle">
-                <input
-                  type="checkbox"
-                  id="hide-ko-sub-toggle"
-                  checked={hideKoreanSubTitle}
-                  onChange={(e) => setHideKoreanSubTitle(e.target.checked)}
-                />
-                <label htmlFor="hide-ko-sub-toggle">{text.hideKoreanSubTitle}</label>
-              </div>
-            )}
-            {language === 'ko' && (
-              <div className="format-toggle">
-                <input
-                  type="checkbox"
-                  id="choseong-search-toggle"
-                  checked={useChoseongSearch}
-                  onChange={(e) => setUseChoseongSearch(e.target.checked)}
-                />
-                <label htmlFor="choseong-search-toggle">초성 검색 사용(느리면 체크 해제)</label>
-              </div>
-            )}
-            <div className="opacity-slider-container">
-              <label htmlFor="opacity-slider">{text.bgOpacity}</label>
-              <div className="opacity-control">
-                <input
-                  type="range"
-                  id="opacity-slider"
-                  min="0"
-                  max="100"
-                  value={backgroundOpacity}
-                  onChange={(e) => setBackgroundOpacity(parseInt(e.target.value, 10))}
-                />
-                <button className="reset-opacity-btn" onClick={() => setBackgroundOpacity(80)} title="Reset opacity">
-                  ↺
-                </button>
-              </div>
-            </div>
-            <BackgroundSelector setBackground={setBackground} language={language} />
-            <p className="disclaimer-text" dangerouslySetInnerHTML={{ __html: text.disclaimer }} />
-          </div>
-        )}
-      </div>
+
 
       <div className="filter-bar">
         <input
@@ -480,10 +427,12 @@ function App() {
                     }
                     const classNames = `circle ${diff} ${isFiltered ? 'filtered' : ''}`;
 
+                    const mirrorSuffix = isMirrorMode ? '_mr' : '';
+
                     return (
                       <a
                         key={diff}
-                        href={`https://asset.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
+                        href={`https://asset.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}${mirrorSuffix}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={classNames}
@@ -499,6 +448,89 @@ function App() {
           );
         })}
         {filteredSongs.length === 0 && <p>{text.noResults}</p>}
+      </div>
+
+      <div className="mirror-toggle-wrapper">
+        <div className="mirror-toggle-content">
+          <div className="settings-container">
+            <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="settings-button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+              </svg>
+            </button>
+            {isOptionsOpen && (
+              <div className="options-window">
+                <button className="close-options-btn" onClick={() => setIsOptionsOpen(false)}>✕</button>
+                <div className="language-selector">
+                  <span>🌐</span>
+                  <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+                    <option value="ko">🇰🇷한국어</option>
+                    <option value="jp">🇯🇵日本語</option>
+                  </select>
+                </div>
+                <div className="format-toggle">
+                  <input
+                    type="checkbox"
+                    id="webp-toggle"
+                    checked={!useWebP}
+                    onChange={(e) => setUseWebP(!e.target.checked)}
+                  />
+                  <label htmlFor="webp-toggle" dangerouslySetInnerHTML={{ __html: text.svgOption }} />
+                </div>
+                {language === 'jp' && (
+                  <div className="format-toggle">
+                    <input
+                      type="checkbox"
+                      id="hide-ko-sub-toggle"
+                      checked={hideKoreanSubTitle}
+                      onChange={(e) => setHideKoreanSubTitle(e.target.checked)}
+                    />
+                    <label htmlFor="hide-ko-sub-toggle">{text.hideKoreanSubTitle}</label>
+                  </div>
+                )}
+                {language === 'ko' && (
+                  <div className="format-toggle">
+                    <input
+                      type="checkbox"
+                      id="choseong-search-toggle"
+                      checked={useChoseongSearch}
+                      onChange={(e) => setUseChoseongSearch(e.target.checked)}
+                    />
+                    <label htmlFor="choseong-search-toggle">초성 검색 사용(느리면 체크 해제)</label>
+                  </div>
+                )}
+                <div className="opacity-slider-container">
+                  <label htmlFor="opacity-slider">{text.bgOpacity}</label>
+                  <div className="opacity-control">
+                    <input
+                      type="range"
+                      id="opacity-slider"
+                      min="0"
+                      max="100"
+                      value={backgroundOpacity}
+                      onChange={(e) => setBackgroundOpacity(parseInt(e.target.value, 10))}
+                    />
+                    <button className="reset-opacity-btn" onClick={() => setBackgroundOpacity(80)} title="Reset opacity">
+                      ↺
+                    </button>
+                  </div>
+                </div>
+                <BackgroundSelector setBackground={setBackground} language={language} />
+                <p className="disclaimer-text" dangerouslySetInnerHTML={{ __html: text.disclaimer }} />
+              </div>
+            )}
+          </div>
+          <div className="mirror-toggle-container">
+            <label className="mirror-toggle-label">
+              <input
+                type="checkbox"
+                checked={isMirrorMode}
+                onChange={(e) => setIsMirrorMode(e.target.checked)}
+              />
+              <span className="mirror-toggle-text">{text.mirrorMode}</span>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   );
