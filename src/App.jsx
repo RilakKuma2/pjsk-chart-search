@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { getChoseong } from 'es-hangul';
 import './App.css';
 
 const UNIT_NAME_MAP = {
@@ -16,7 +17,7 @@ const CLASS_MAP_JP = {
   "기존곡": "既存曲",
   "공모전": "公募展",
   "하코곡": "書き下ろし",
-  "커버곡" : "カバー"
+  "커버곡": "カバー"
 };
 
 const UI_TEXT = {
@@ -88,9 +89,9 @@ const BackgroundSelector = ({ setBackground, language }) => {
 
 const DifficultyFilter = ({ diff, shorthand, value, onChange }) => {
   let start, end;
-  if (diff === 'expert') { start = 21; end = 31; } 
-  else if (diff === 'master') { start = 25; end = 37; } 
-  else if (diff === 'append') { start = 24; end = 37; } 
+  if (diff === 'expert') { start = 21; end = 32; }
+  else if (diff === 'master') { start = 25; end = 37; }
+  else if (diff === 'append') { start = 24; end = 38; }
   else { return null; }
   const levels = Array.from({ length: end - start + 1 }, (_, i) => end - i);
   return (
@@ -111,6 +112,8 @@ function App() {
   const [allSongs, setAllSongs] = useState([]);
   const [filteredSongs, setFilteredSongs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [delayedSearchTerm, setDelayedSearchTerm] = useState('');
   const [expertLevel, setExpertLevel] = useState('');
   const [masterLevel, setMasterLevel] = useState('');
   const [appendLevel, setAppendLevel] = useState('');
@@ -118,7 +121,7 @@ function App() {
   const [error, setError] = useState(null);
   const [activeSongId, setActiveSongId] = useState(null);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  
+
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'ko');
   const [background, setBackground] = useState(() => localStorage.getItem('background') || '/bg.webp');
   const [hideKoreanSubTitle, setHideKoreanSubTitle] = useState(() => localStorage.getItem('hideKoreanSubTitle') === 'true');
@@ -132,14 +135,46 @@ function App() {
     return storedValue === null ? true : storedValue === 'true';
   });
 
+  const [useChoseongSearch, setUseChoseongSearch] = useState(() => {
+    const storedValue = localStorage.getItem('useChoseongSearch');
+    return storedValue === null ? true : storedValue === 'true';
+  });
+
   const isTouchDevice = useMemo(() => {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }, []);
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 100);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDelayedSearchTerm(searchTerm);
+    }, 400);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  useEffect(() => {
     fetch('https://api.rilaksekai.com/api/songs')
       .then(response => { if (!response.ok) throw new Error('네트워크 응답 오류'); return response.json(); })
-      .then(data => { setAllSongs(data); setFilteredSongs(data); })
+      .then(data => {
+        const songsWithChoseong = data.map(song => ({
+          ...song,
+          choseong: song.title_ko ? getChoseong(song.title_ko).replace(/\s/g, '') : ''
+        }));
+        setAllSongs(songsWithChoseong);
+        setFilteredSongs(songsWithChoseong);
+      })
       .catch(error => setError(error))
       .finally(() => setIsLoading(false));
   }, []);
@@ -185,14 +220,26 @@ function App() {
 
   useEffect(() => {
     let result = allSongs;
-    if (searchTerm) {
-      const normalizedSearchTerm = searchTerm.toLowerCase().replace(/\s/g, '');
-      result = result.filter(song =>
+    if (debouncedSearchTerm) {
+      const normalizedSearchTerm = debouncedSearchTerm.toLowerCase().replace(/\s/g, '');
+      const standardSearch = result.filter(song =>
         (song.title_ko && song.title_ko.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
         (song.title_jp && song.title_jp.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
         (song.composer && song.composer.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
         (song.composer_jp && song.composer_jp.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm))
       );
+
+      if (standardSearch.length === 0 && useChoseongSearch && language === 'ko' && delayedSearchTerm.length >= 2 && debouncedSearchTerm === delayedSearchTerm) {
+        // 입력된 검색어의 초성을 추출 (예: "감사감사" -> "ㄱㅅㄱㅅ")
+        const searchInitials = getChoseong(delayedSearchTerm).replace(/\s/g, '');
+
+        result = result.filter(song => {
+          if (!song.choseong) return false;
+          return song.choseong.includes(searchInitials);
+        });
+      } else {
+        result = standardSearch;
+      }
     }
 
     if (expertLevel) {
@@ -205,7 +252,7 @@ function App() {
       } else {
         result = result.filter(song => song.levels.append === parseInt(appendLevel));
       }
-      
+
       const getSortableDate = (song) => {
         let dateStr;
         if (song.apd) {
@@ -221,7 +268,7 @@ function App() {
     }
 
     setFilteredSongs(result);
-  }, [searchTerm, expertLevel, masterLevel, appendLevel, allSongs]);
+  }, [debouncedSearchTerm, delayedSearchTerm, expertLevel, masterLevel, appendLevel, allSongs, useChoseongSearch, language]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -236,6 +283,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('useWebP', useWebP);
   }, [useWebP]);
+
+  useEffect(() => {
+    localStorage.setItem('useChoseongSearch', useChoseongSearch);
+  }, [useChoseongSearch]);
 
   const handleFilterChange = (diff, value) => {
     setExpertLevel(''); setMasterLevel(''); setAppendLevel('');
@@ -256,7 +307,7 @@ function App() {
     <div className={`App ${language === 'jp' ? 'lang-jp' : ''}`}>
       <header>
         <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
-        <a href="https://rilakkuma2.github.io/prsk-calc/" target="_blank" rel="noopener noreferrer" className="calculator-button">
+        <a href="https://calc.rilaksekai.com/" target="_blank" rel="noopener noreferrer" className="calculator-button">
           {text.calculator}
         </a>
       </header>
@@ -294,6 +345,17 @@ function App() {
                 <label htmlFor="hide-ko-sub-toggle">{text.hideKoreanSubTitle}</label>
               </div>
             )}
+            {language === 'ko' && (
+              <div className="format-toggle">
+                <input
+                  type="checkbox"
+                  id="choseong-search-toggle"
+                  checked={useChoseongSearch}
+                  onChange={(e) => setUseChoseongSearch(e.target.checked)}
+                />
+                <label htmlFor="choseong-search-toggle">초성 검색 사용(느리면 체크 해제)</label>
+              </div>
+            )}
             <div className="opacity-slider-container">
               <label htmlFor="opacity-slider">{text.bgOpacity}</label>
               <div className="opacity-control">
@@ -317,12 +379,12 @@ function App() {
       </div>
 
       <div className="filter-bar">
-        <input 
-          type="text" 
+        <input
+          type="text"
           placeholder={text.searchPlaceholder}
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
-          className="search-input" 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
         />
         <div className="difficulty-filters">
           <DifficultyFilter diff="expert" shorthand="EX" value={expertLevel} onChange={handleFilterChange} />
@@ -344,7 +406,7 @@ function App() {
             coverHandlers.onMouseEnter = () => setActiveSongId(song.id);
             coverHandlers.onMouseLeave = () => setActiveSongId(null);
           }
-          
+
           const cacheBuster = song.ver && song.ver !== "0" ? `?v=${song.ver}` : '';
 
           const isJapanese = language === 'jp';
@@ -356,20 +418,20 @@ function App() {
           const classification = isJapanese ? (CLASS_MAP_JP[song.classification] || song.classification) : song.classification;
 
           return (
-            <div key={song.id} className="song-item" style={{'--bg-image': `url(https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster})`}}>
-              <div 
+            <div key={song.id} className="song-item" style={{ '--bg-image': `url(https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster})` }}>
+              <div
                 className="song-cover-wrapper"
                 {...coverHandlers}
               >
-                <img 
-                  loading="lazy" 
-                  src={`https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`} 
-                  alt={title} 
-                  className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`} 
+                <img
+                  loading="lazy"
+                  src={`https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`}
+                  alt={title}
+                  className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`}
                 />
                 {activeSongId === song.id && (
                   <div className="song-popover">
-                     <div className="popover-column">
+                    <div className="popover-column">
                       <span>{classification || '-'}</span>
                       <span>{unit}</span>
                     </div>
@@ -379,7 +441,7 @@ function App() {
                     </div>
                     <div className="popover-column">
                       <span>{song.length || '-'}</span>
-                      <span style={{textAlign: 'right'}}>
+                      <span style={{ textAlign: 'right' }}>
                         {song.release_date || '-'}
                         {song.apd && <div>(APD) {song.apd}</div>}
                       </span>
@@ -419,12 +481,12 @@ function App() {
                     const classNames = `circle ${diff} ${isFiltered ? 'filtered' : ''}`;
 
                     return (
-                      <a 
-                        key={diff} 
+                      <a
+                        key={diff}
                         href={`https://asset.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className={classNames} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={classNames}
                         title={`${diff.charAt(0).toUpperCase() + diff.slice(1)}: ${level}`}
                       >
                         {level}
