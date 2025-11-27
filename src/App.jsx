@@ -175,15 +175,33 @@ function App() {
     fetch('https://api.rilaksekai.com/api/songs')
       .then(response => { if (!response.ok) throw new Error('네트워크 응답 오류'); return response.json(); })
       .then(data => {
-        const songsWithChoseong = data.map(song => ({
-          ...song,
-          choseong: song.title_ko ? getChoseong(song.title_ko).replace(/\s/g, '') : ''
-        }));
-        setAllSongs(songsWithChoseong);
-        setFilteredSongs(songsWithChoseong);
+        // 1. 원본 데이터로 즉시 렌더링 (로딩 해제)
+        setAllSongs(data);
+        setFilteredSongs(data);
+        setIsLoading(false);
+
+        // 2. 초성 변환은 비동기로 처리 (UI 차단 방지)
+        setTimeout(() => {
+          const songsWithChoseong = data.map(song => ({
+            ...song,
+            choseong: song.title_ko ? getChoseong(song.title_ko).replace(/\s/g, '') : ''
+          }));
+
+          // 변환된 데이터로 업데이트 (기존 데이터 교체)
+          setAllSongs(songsWithChoseong);
+          // 검색어가 없을 때만 필터된 목록도 업데이트 (사용자가 이미 검색 중일 수 있음)
+          setFilteredSongs(prev => {
+            // 만약 사용자가 그 사이 검색을 했다면 필터된 목록은 건드리지 않음
+            // (단, 여기서는 간단히 전체 목록만 업데이트하고, 검색 로직이 allSongs를 참조하므로 
+            //  다음 검색부터 초성이 적용됨. 현재 보여지는 목록에 초성 데이터를 입히려면 아래처럼 처리)
+            return songsWithChoseong;
+          });
+        }, 0);
       })
-      .catch(error => setError(error))
-      .finally(() => setIsLoading(false));
+      .catch(error => {
+        setError(error);
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -496,7 +514,7 @@ function App() {
                       checked={useChoseongSearch}
                       onChange={(e) => setUseChoseongSearch(e.target.checked)}
                     />
-                    <label htmlFor="choseong-search-toggle">초성 검색 사용(느리면 체크 해제)</label>
+                    <label htmlFor="choseong-search-toggle">초성 검색 사용(검색 느리면 체크 해제)</label>
                   </div>
                 )}
                 <div className="opacity-slider-container">

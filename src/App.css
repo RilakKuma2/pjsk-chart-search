@@ -16,6 +16,11 @@
   --unit-color-unk: #aaaaaa;
 }
 
+html {
+  background-color: var(--bg-color);
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -23,6 +28,7 @@ body {
   color: var(--text-color);
   position: relative;
   z-index: 0;
+  min-height: 100vh;
 }
 
 body::before {
@@ -31,7 +37,8 @@ body::before {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
+  /* Use height instead of bottom: 0 for iOS */
   background-image: var(--background-image);
   background-size: cover;
   background-position: center;
@@ -44,7 +51,8 @@ body::after {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
+  /* Use height instead of bottom: 0 for iOS */
   background-image:
     linear-gradient(to bottom, rgba(129, 126, 170, 0.8), rgba(92, 92, 125, 0.3) 50%, rgba(92, 92, 125, 0.8)),
     radial-gradient(circle at center, #afb5d5 0%, #adaac3 1.25px, transparent 1.25px),
