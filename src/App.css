@@ -648,8 +648,35 @@ header {
     left: 0;
     min-width: 150px;
   }
+
+  /* Adjust header buttons for mobile */
+  .header-buttons {
+    gap: 0.3rem;
+    /* Reduce gap */
+  }
+
+  .calculator-button {
+    padding: 0.5rem 0.8rem;
+    /* Reduce padding */
+    font-size: 0.8rem;
+    /* Reduce font size */
+  }
 }
 
+@media (max-width: 375px) {
+  .header-buttons {
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-end;
+  }
+
+  .calculator-button {
+    width: 80%;
+    /* Optional: make them same width or just fit content */
+    text-align: center;
+    white-space: nowrap;
+  }
+}
 
 
 .language-selector {
@@ -884,11 +911,11 @@ header {
   }
 
   .calculator-button {
-    width: 100%;
+    width: 70%;
     /* Make it take full width */
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 0.8rem;
     /* Adjust padding */
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     /* Adjust font size */
   }
 
