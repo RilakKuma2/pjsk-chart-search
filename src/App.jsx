@@ -25,6 +25,7 @@ const UI_TEXT = {
     searchPlaceholder: "곡명 또는 작곡가로 검색 (한/일)",
     svgOption: "svg 파일로 채보 보기<br>※텍스트 검색 가능하나 일부 애드블록에서 긴 로딩",
     calculator: "프로세카 계산기",
+    tierList: "서열표",
     loading: "로딩 중...",
     error: "캐시삭제/ios웹앱(바로가기)면 재설치: ",
     noResults: "검색 결과가 없습니다.",
@@ -37,6 +38,7 @@ const UI_TEXT = {
     searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
     svgOption: "SVGファイルで譜面を見る ※テキスト検索可能、<br>一部広告ブロックで長いローディング",
     calculator: "プロセカ計算機",
+    tierList: "難易度表",
     loading: "ローディング中...",
     error: "キャッシュを削除するか、再インストールしてください: ",
     noResults: "検索結果がありません。",
@@ -335,10 +337,17 @@ function App() {
   return (
     <div className={`App ${language === 'jp' ? 'lang-jp' : ''}`}>
       <header>
-        <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
-        <a href="https://calc.rilaksekai.com/" target="_blank" rel="noopener noreferrer" className="calculator-button">
-          {text.calculator}
+        <a href="/" onClick={(e) => { e.preventDefault(); window.location.reload(); }}>
+          <img src="/title-image.webp?v=2" alt="pjsk-charts" className="title-image" />
         </a>
+        <div className="header-buttons">
+          <a href="https://force.rilaksekai.com/stats" className="calculator-button">
+            {UI_TEXT[language].tierList}
+          </a>
+          <a href="https://calc.rilaksekai.com/" target="_blank" rel="noopener noreferrer" className="calculator-button">
+            {text.calculator}
+          </a>
+        </div>
       </header>
 
 
