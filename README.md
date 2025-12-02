@@ -23,19 +23,6 @@ npm install
 
 npm run build
 
-npm install -g pm2 serve
-
-# 프론트엔드 서버 실행 (3000번 포트)
-pm2 start serve -n pjsk-charts-frontend -- -s dist -l 3000
-
-# API 서버 실행 (4000번 포트)
-pm2 start server.cjs -n pjsk-charts-api
-
-pm2 save
-pm2 startup
-```
-
-
 # 채보 데이터
 ```
   {
