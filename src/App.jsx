@@ -392,14 +392,14 @@ function App() {
           const classification = isJapanese ? (CLASS_MAP_JP[song.classification] || song.classification) : song.classification;
 
           return (
-            <div key={song.id} className="song-item" style={{ '--bg-image': `url(https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster})` }}>
+            <div key={song.id} className="song-item" style={{ '--bg-image': `url(https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.webp${cacheBuster})` }}>
               <div
                 className="song-cover-wrapper"
                 {...coverHandlers}
               >
                 <img
                   loading="lazy"
-                  src={`https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.jpg${cacheBuster}`}
+                  src={`https://asset.rilaksekai.com/cover/${String(song.id).padStart(3, '0')}.webp${cacheBuster}`}
                   alt={title}
                   className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`}
                 />
