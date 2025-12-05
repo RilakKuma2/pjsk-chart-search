@@ -126,9 +126,19 @@ function App() {
   const [activeSongId, setActiveSongId] = useState(null);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
-  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'ko');
+  const [language, setLanguage] = useState(() => {
+    const storedLang = localStorage.getItem('language');
+    if (storedLang) return storedLang;
+    const browserLang = navigator.language || navigator.userLanguage;
+    return browserLang && browserLang.startsWith('ja') ? 'jp' : 'ko';
+  });
   const [background, setBackground] = useState(() => localStorage.getItem('background') || '/bg.webp');
-  const [hideKoreanSubTitle, setHideKoreanSubTitle] = useState(() => localStorage.getItem('hideKoreanSubTitle') === 'true');
+  const [hideKoreanSubTitle, setHideKoreanSubTitle] = useState(() => {
+    const storedValue = localStorage.getItem('hideKoreanSubTitle');
+    if (storedValue !== null) return storedValue === 'true';
+    const browserLang = navigator.language || navigator.userLanguage;
+    return browserLang && browserLang.startsWith('ja');
+  });
   const [backgroundOpacity, setBackgroundOpacity] = useState(() => {
     const storedOpacity = localStorage.getItem('backgroundOpacity');
     return storedOpacity !== null ? parseInt(storedOpacity, 10) : 80;
@@ -454,7 +464,7 @@ function App() {
                     }
                     const classNames = `circle ${diff} ${isFiltered ? 'filtered' : ''}`;
 
-                    const mirrorSuffix = isMirrorMode ? '_mr' : '';
+                    const mirrorSuffix = (isMirrorMode && !useWebP) ? '_mr' : '';
 
                     return (
                       <a
@@ -547,16 +557,18 @@ function App() {
               </div>
             )}
           </div>
-          <div className="mirror-toggle-container">
-            <label className="mirror-toggle-label">
-              <input
-                type="checkbox"
-                checked={isMirrorMode}
-                onChange={(e) => setIsMirrorMode(e.target.checked)}
-              />
-              <span className="mirror-toggle-text">{text.mirrorMode}</span>
-            </label>
-          </div>
+          {!useWebP && (
+            <div className="mirror-toggle-container">
+              <label className="mirror-toggle-label">
+                <input
+                  type="checkbox"
+                  checked={isMirrorMode}
+                  onChange={(e) => setIsMirrorMode(e.target.checked)}
+                />
+                <span className="mirror-toggle-text">{text.mirrorMode}</span>
+              </label>
+            </div>
+          )}
         </div>
       </div>
     </div>
