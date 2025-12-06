@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getChoseong } from 'es-hangul';
+import { toHiragana } from 'wanakana';
 import './App.css';
 
 const UNIT_NAME_MAP = {
@@ -32,7 +33,8 @@ const UI_TEXT = {
     bgTitle: "배경화면 설정",
     bgOpacity: "배경화면 투명도",
     disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다.",
-    mirrorMode: "미러 모드"
+    mirrorMode: "미러 모드",
+    pageTitle: "프로세카 채보"
   },
   jp: {
     searchPlaceholder: "曲名または作曲家で検索 (日/韓)",
@@ -46,7 +48,8 @@ const UI_TEXT = {
     bgOpacity: "背景の透明度",
     hideKoreanSubTitle: "韓国語の曲名を隠す",
     disclaimer: "このウェブサイトはファンメイドのサイトであり、<br className=\"br-pc\"/>すべての権利はSega、Colorful Palette、Crypton<br className=\"br-pc\"/>を含む資料の正当な所有者に帰属します。",
-    mirrorMode: "ミラーモード"
+    mirrorMode: "ミラーモード",
+    pageTitle: "プロセカ譜面"
   }
 };
 
@@ -218,6 +221,7 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('language', language);
+    document.title = UI_TEXT[language].pageTitle;
   }, [language]);
 
   useEffect(() => {
@@ -263,12 +267,35 @@ function App() {
     let result = allSongs;
     if (debouncedSearchTerm) {
       const normalizedSearchTerm = debouncedSearchTerm.toLowerCase().replace(/\s/g, '');
-      const standardSearch = result.filter(song =>
-        (song.title_ko && song.title_ko.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
-        (song.title_jp && song.title_jp.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
-        (song.composer && song.composer.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm)) ||
-        (song.composer_jp && song.composer_jp.toLowerCase().replace(/\s/g, '').includes(normalizedSearchTerm))
-      );
+      const searchHiragana = toHiragana(normalizedSearchTerm);
+
+      const standardSearch = result.filter(song => {
+        // Helper to normalize text for comparison (remove spaces, lower case)
+        const normalize = (text) => text ? text.toLowerCase().replace(/\s/g, '') : '';
+
+        // Korean search
+        if (song.title_ko && normalize(song.title_ko).includes(normalizedSearchTerm)) return true;
+        if (song.composer && normalize(song.composer).includes(normalizedSearchTerm)) return true;
+
+        // Japanese search (with Kana unification)
+        if (song.title_jp) {
+          const titleJp = normalize(song.title_jp);
+          if (titleJp.includes(normalizedSearchTerm)) return true;
+          if (toHiragana(titleJp).includes(searchHiragana)) return true;
+        }
+        if (song.title_hi) {
+          const titleHi = normalize(song.title_hi);
+          if (titleHi.includes(normalizedSearchTerm)) return true;
+          if (titleHi.includes(searchHiragana)) return true;
+        }
+        if (song.composer_jp) {
+          const composerJp = normalize(song.composer_jp);
+          if (composerJp.includes(normalizedSearchTerm)) return true;
+          if (toHiragana(composerJp).includes(searchHiragana)) return true;
+        }
+
+        return false;
+      });
 
       if (standardSearch.length === 0 && useChoseongSearch && language === 'ko' && delayedSearchTerm.length >= 2 && debouncedSearchTerm === delayedSearchTerm) {
         // 입력된 검색어의 초성을 추출 (예: "감사감사" -> "ㄱㅅㄱㅅ")
@@ -398,7 +425,7 @@ function App() {
           const subTitle = isJapanese ? song.title_ko : song.title_jp;
           const composer = isJapanese ? song.composer_jp : song.composer;
           const unit = isJapanese ? song.unit_code : (UNIT_NAME_MAP[song.unit_code] || song.unit_code);
-          const mvType = isJapanese && song.mv_type === '원곡' ? '原曲' : song.mv_type;
+          const mvType = isJapanese && song.mv_type && song.mv_type.trim() === '원곡' ? '原曲' : song.mv_type;
           const classification = isJapanese ? (CLASS_MAP_JP[song.classification] || song.classification) : song.classification;
 
           return (
