@@ -199,7 +199,18 @@ function App() {
       .then(data => {
         // 1. 원본 데이터로 즉시 렌더링 (로딩 해제)
         setAllSongs(data);
-        setFilteredSongs(data);
+
+        let initialFiltered = data;
+        if (hideSpoilers) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          initialFiltered = data.filter(song => {
+            if (!song.release_date) return true;
+            const releaseDate = new Date(song.release_date);
+            return releaseDate <= today;
+          });
+        }
+        setFilteredSongs(initialFiltered);
         setIsLoading(false);
 
         // 2. 초성 및 발음 변환은 비동기로 처리 (UI 차단 방지)
@@ -249,9 +260,20 @@ function App() {
           // 검색어가 없을 때만 필터된 목록도 업데이트 (사용자가 이미 검색 중일 수 있음)
           setFilteredSongs(prev => {
             // 만약 사용자가 그 사이 검색을 했다면 필터된 목록은 건드리지 않음
-            // (단, 여기서는 간단히 전체 목록만 업데이트하고, 검색 로직이 allSongs를 참조하므로 
-            //  다음 검색부터 초성이 적용됨. 현재 보여지는 목록에 초성 데이터를 입히려면 아래처럼 처리)
-            return songsWithPhonetics;
+            // 하지만 초기 로딩 시점(검색어 없음)이라면 필터링된 목록도 업데이트해야 함
+            // 이때 스포일러 필터가 켜져 있다면 그것도 적용해야 함
+
+            let nextFiltered = songsWithPhonetics;
+            if (hideSpoilers) {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              nextFiltered = songsWithPhonetics.filter(song => {
+                if (!song.release_date) return true;
+                const releaseDate = new Date(song.release_date);
+                return releaseDate <= today;
+              });
+            }
+            return nextFiltered;
           });
         }, 0);
       })
