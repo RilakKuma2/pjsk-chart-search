@@ -34,7 +34,8 @@ const UI_TEXT = {
     bgOpacity: "배경화면 투명도",
     disclaimer: "이 웹사이트는 팬메이드 사이트이며 모든 권리는<br className=\"br-pc\"/>Sega, Colorful Palette, Crypton을 포함한<br className=\"br-pc\"/>자료들의 정당한 소유자에게 있습니다.",
     mirrorMode: "미러 모드",
-    pageTitle: "프로세카 채보"
+    pageTitle: "프로세카 채보",
+    hideSpoilers: "수록 예정 곡 숨기기"
   },
   jp: {
     searchPlaceholder: "曲名または作曲家で検索 (日/韓/ローマ字)",
@@ -49,7 +50,8 @@ const UI_TEXT = {
     hideKoreanSubTitle: "韓国語の曲名を隠す",
     disclaimer: "このウェブサイトはファンメイドのサイトであり、<br className=\"br-pc\"/>すべての権利はSega、Colorful Palette、Crypton<br className=\"br-pc\"/>を含む資料の正当な所有者に帰属します。",
     mirrorMode: "ミラーモード",
-    pageTitle: "プロセカ譜面"
+    pageTitle: "プロセカ譜面",
+    hideSpoilers: "収録予定曲を隠す"
   }
 };
 
@@ -159,6 +161,11 @@ function App() {
 
   const [isMirrorMode, setIsMirrorMode] = useState(() => {
     const storedValue = localStorage.getItem('isMirrorMode');
+    return storedValue === null ? false : storedValue === 'true';
+  });
+
+  const [hideSpoilers, setHideSpoilers] = useState(() => {
+    const storedValue = localStorage.getItem('hideSpoilers');
     return storedValue === null ? false : storedValue === 'true';
   });
 
@@ -273,6 +280,10 @@ function App() {
   }, [isMirrorMode]);
 
   useEffect(() => {
+    localStorage.setItem('hideSpoilers', hideSpoilers);
+  }, [hideSpoilers]);
+
+  useEffect(() => {
     if (background) {
       if (background.startsWith('data:image')) {
         const img = new Image();
@@ -356,6 +367,18 @@ function App() {
       }
     }
 
+    if (hideSpoilers) {
+      const today = new Date();
+      // Set time to 00:00:00 for accurate date comparison
+      today.setHours(0, 0, 0, 0);
+
+      result = result.filter(song => {
+        if (!song.release_date) return true; // Keep songs without date
+        const releaseDate = new Date(song.release_date);
+        return releaseDate <= today;
+      });
+    }
+
     if (expertLevel) {
       result = result.filter(song => song.levels.expert === parseInt(expertLevel));
     } else if (masterLevel) {
@@ -382,7 +405,7 @@ function App() {
     }
 
     setFilteredSongs(result);
-  }, [debouncedSearchTerm, delayedSearchTerm, expertLevel, masterLevel, appendLevel, allSongs, useChoseongSearch, language]);
+  }, [debouncedSearchTerm, delayedSearchTerm, expertLevel, masterLevel, appendLevel, allSongs, useChoseongSearch, language, hideSpoilers]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -609,6 +632,15 @@ function App() {
                     <label htmlFor="choseong-search-toggle">초성 검색 사용(검색 느리면 체크 해제)</label>
                   </div>
                 )}
+                <div className="format-toggle">
+                  <input
+                    type="checkbox"
+                    id="spoiler-toggle"
+                    checked={hideSpoilers}
+                    onChange={(e) => setHideSpoilers(e.target.checked)}
+                  />
+                  <label htmlFor="spoiler-toggle">{text.hideSpoilers}</label>
+                </div>
                 <div className="opacity-slider-container">
                   <label htmlFor="opacity-slider">{text.bgOpacity}</label>
                   <div className="opacity-control">
