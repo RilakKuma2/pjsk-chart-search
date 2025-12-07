@@ -456,6 +456,13 @@ function App() {
     }
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const difficulties = ['easy', 'normal', 'hard', 'expert', 'master', 'append'];
   const text = UI_TEXT[language];
 
@@ -607,6 +614,18 @@ function App() {
 
       <div className="mirror-toggle-wrapper">
         <div className="mirror-toggle-content">
+          {!useWebP && (
+            <div className="mirror-toggle-container">
+              <label className="mirror-toggle-label">
+                <input
+                  type="checkbox"
+                  checked={isMirrorMode}
+                  onChange={(e) => setIsMirrorMode(e.target.checked)}
+                />
+                <span className="mirror-toggle-text">{text.mirrorMode}</span>
+              </label>
+            </div>
+          )}
           <div className="settings-container">
             <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="settings-button">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
@@ -697,18 +716,11 @@ function App() {
               </div>
             )}
           </div>
-          {!useWebP && (
-            <div className="mirror-toggle-container">
-              <label className="mirror-toggle-label">
-                <input
-                  type="checkbox"
-                  checked={isMirrorMode}
-                  onChange={(e) => setIsMirrorMode(e.target.checked)}
-                />
-                <span className="mirror-toggle-text">{text.mirrorMode}</span>
-              </label>
-            </div>
-          )}
+          <button onClick={handleScrollToTop} className="scroll-top-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
