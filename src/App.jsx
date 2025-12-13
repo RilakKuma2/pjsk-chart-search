@@ -245,6 +245,7 @@ function App() {
   const [stashedFilters, setStashedFilters] = useState(null);
 
   const [songCounts, setSongCounts] = useState({ released: 0, upcoming: 0 });
+  const [isExplicitSort, setIsExplicitSort] = useState(false);
 
 
   const [useChoseongSearch, setUseChoseongSearch] = useState(() => {
@@ -1099,13 +1100,17 @@ function App() {
                   onClick={() => {
                     setSortOption('date');
                     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+                    setIsExplicitSort(true);
                   }}
                 >
                   {sortOption === 'date' && sortOrder === 'desc' ? '▼' : '▲'}
                 </button>
                 <button className="popover-reset-btn" onClick={() => {
                   setFilterDate(globalRanges.date);
-                  if (sortOption === 'date') setSortOption(null);
+                  if (sortOption === 'date') {
+                    setSortOption(null);
+                    setIsExplicitSort(false);
+                  }
                 }}>
                   ↺
                 </button>
@@ -1250,6 +1255,13 @@ function App() {
   const text = UI_TEXT[language];
   const [isMobile, setIsMobile] = useState(false);
 
+  // Helper consts for display logic
+  const isDateFilterActive = filterDate[0] > globalRanges.date[0] || filterDate[1] < globalRanges.date[1];
+  const isNoteFilterActive =
+    (filterExNote[0] > globalRanges.exNote[0] || filterExNote[1] < globalRanges.exNote[1]) ||
+    (filterMaNote[0] > globalRanges.maNote[0] || filterMaNote[1] < globalRanges.maNote[1]) ||
+    (filterApNote[0] > globalRanges.apNote[0] || filterApNote[1] < globalRanges.apNote[1]);
+
   if (isLoading) return <div className="App"><h1>{text.loading}</h1></div>;
   if (error) return <div className="App"><h1>{text.error}{error.message}</h1></div>;
 
@@ -1291,7 +1303,7 @@ function App() {
           const hasActiveFilters = filterClassification.length > 0 ||
             filterUnit.length > 0 ||
             filterMvType.length > 0 ||
-            (sortOption && !(sortOption === 'date' && sortOrder === 'desc')) ||
+            (sortOption && (!(sortOption === 'date' && sortOrder === 'desc') || isExplicitSort)) ||
             (filterLength[0] > globalRanges.length[0] || filterLength[1] < globalRanges.length[1]) ||
             (filterBpm[0] > globalRanges.bpm[0] || filterBpm[1] < globalRanges.bpm[1]) ||
             (filterDate[0] > globalRanges.date[0] || filterDate[1] < globalRanges.date[1]) ||
@@ -1322,7 +1334,8 @@ function App() {
                         mvMember: filterMvMember,
                         sortOption: sortOption,
                         sortOrder: sortOrder,
-                        activeNoteTab: activeNoteTab
+                        activeNoteTab: activeNoteTab,
+                        isExplicitSort: isExplicitSort
                       });
 
                       // Reset all to defaults (Clean state for Main View)
@@ -1339,6 +1352,7 @@ function App() {
                       setSortOption(null);
                       setSortOrder('asc');
                       setActiveNoteTab('ex');
+                      setIsExplicitSort(false);
 
                       setShowDetailSearch(false);
                     } else {
@@ -1360,11 +1374,13 @@ function App() {
                         setSortOption(stashedFilters.sortOption || 'date');
                         setSortOrder(stashedFilters.sortOrder || 'desc');
                         setActiveNoteTab(stashedFilters.activeNoteTab || 'ex');
+                        setIsExplicitSort(stashedFilters.isExplicitSort || false);
                       } else {
-                        // Default behavior if no stash: Sort by Date Desc
+                        // Default behavior if no stash: Sort by Date Desc (Auto-sort)
                         setSortOption('date');
                         setSortOrder('desc');
                         setActiveNoteTab('ex');
+                        setIsExplicitSort(false);
                       }
                       setShowDetailSearch(true);
                     }
@@ -1401,6 +1417,7 @@ function App() {
                       setActiveNoteTab('ex');
                       setSortOption('date');
                       setSortOrder('desc');
+                      setIsExplicitSort(false);
                     }}
                     style={{
                       opacity: hasActiveFilters ? 1 : 0,
@@ -1592,14 +1609,14 @@ function App() {
                       {sortOption === 'length' && song.length && (
                         <span style={{ marginLeft: '0.5rem' }}>{song.length}</span>
                       )}
-                      {sortOption === 'noteCount' && (
+                      {(sortOption === 'noteCount' || isNoteFilterActive) && (
                         <span style={{ marginLeft: '0.5rem' }}>
                           {activeNoteTab === 'ex' && song.ex_note}
                           {activeNoteTab === 'ma' && song.ma_note}
                           {activeNoteTab === 'ap' && song.ap_note}
                         </span>
                       )}
-                      {sortOption === 'date' && (
+                      {(sortOption === 'date' && isExplicitSort || isDateFilterActive) && (
                         <span style={{ marginLeft: '0.5rem' }}>
                           {activeNoteTab === 'ap' && song.apd ? `20${song.apd}` : song.release_date}
                         </span>

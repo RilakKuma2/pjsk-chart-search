@@ -357,11 +357,9 @@ const GraphModal = ({ isOpen, onClose, allSongs, language }) => {
             // MV Type Filter
             if (filterMvType.length > 0) {
                 const songType = (language === 'jp' && song.mv_type === '원곡') ? '原曲' : song.mv_type;
+                if (!songType) return false;
 
-                const match = filterMvType.some(f => {
-                    const parts = f.split('/');
-                    return parts.includes(songType);
-                });
+                const match = filterMvType.some(f => songType.includes(f));
                 if (!match) return false;
             }
             return true;
@@ -1451,13 +1449,17 @@ const GraphModal = ({ isOpen, onClose, allSongs, language }) => {
                                         );
                                     }
 
-                                    // Cap height at 85% to leave room for labels (VS allowed to go +10% higher relative to others)
-                                    let heightCap = 85;
-                                    if (activeTab === 'other' && xAxisOther === 'unit') {
-                                        const vsName = getUnitName("VS");
-                                        if (d.label === vsName) heightCap = 85 * 1.2; // +20%
+                                    // Cap height at 85% (absolute max safe height for mobile labels)
+                                    // Scale other bars to 75% max to maintain visual hierarchy where VS (capped at 85%) looks taller
+                                    let heightCap = 75;
+                                    const vsName = getUnitName("VS");
+
+                                    if (activeTab === 'other' && xAxisOther === 'unit' && d.label === vsName) {
+                                        heightCap = 85; // VS gets up to 85%
                                     }
-                                    const heightPercent = maxVal > 0 ? Math.min((d.total / maxVal) * 85, heightCap) : 0;
+
+                                    // Use 75 as the base scale multiplier instead of 85 so normal max hits 75%
+                                    const heightPercent = maxVal > 0 ? Math.min((d.total / maxVal) * 75, heightCap) : 0;
 
                                     return (
                                         <div key={d.label} className="bar-group">
