@@ -1648,7 +1648,7 @@ function App() {
                     return (
                       <a
                         key={diff}
-                        href={`https://asset.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}${mirrorSuffix}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
+                        href={`https://${useWebP ? 'asset' : 'asset2'}.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}${mirrorSuffix}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={classNames}
