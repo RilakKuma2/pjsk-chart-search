@@ -742,6 +742,9 @@ function App() {
     let upcomingCount = 0;
 
     result.forEach(song => {
+      // Exclude songs 707, 708, 709 from counts
+      if ([707, 708, 709].includes(Number(song.id))) return;
+
       if (!song.release_date) {
         releasedCount++; // Assuming no date means released or basic song
       } else {
@@ -1577,6 +1580,14 @@ function App() {
                   alt={title}
                   className={`song-cover unit-border-${song.unit_code.replace('/', '-')}`}
                 />
+                {[707, 708, 709].includes(Number(song.id)) && (
+                  <div className="limited-time-tag">
+                    {(() => {
+                      const limitDate = new Date('2026-04-23T00:00:00+09:00'); // Based on 04/22 passed
+                      return new Date() >= limitDate ? "기간한정(종료)" : "기간한정";
+                    })()}
+                  </div>
+                )}
                 {activeSongId === song.id && (
                   <div className="song-popover">
                     <div className="popover-column">

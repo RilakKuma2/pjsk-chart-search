@@ -320,6 +320,23 @@ header {
   cursor: pointer;
 }
 
+.limited-time-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 68, 119, 0.9);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 5px;
+  border-top-left-radius: 5px;
+  /* Matches cover border radius slightly */
+  border-bottom-right-radius: 6px;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
 .song-cover {
   width: 80px;
   height: 80px;
