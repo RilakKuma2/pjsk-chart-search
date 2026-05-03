@@ -116,6 +116,25 @@ header {
   color: #eaebf3;
 }
 
+.custom-chart-button {
+  background-color: #f1e6ff;
+  color: #4c2d73;
+  border: 1px solid rgba(76, 45, 115, 0.1);
+}
+
+.custom-chart-button:hover {
+  background-color: #4c2d73;
+  color: #f1e6ff;
+}
+
+.desktop-text {
+  display: inline;
+}
+
+.mobile-text {
+  display: none;
+}
+
 /* filter-bar의 아래쪽 여백 조정 */
 .filter-bar {
   display: flex;
@@ -683,8 +702,47 @@ header {
     padding: 1rem;
   }
 
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
   .title-image {
-    max-width: 180px;
+    max-width: clamp(80px, 30vw, 120px);
+    height: auto;
+    align-self: center;
+    flex-shrink: 1;
+  }
+
+  .header-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+  }
+
+  .calculator-button {
+    flex: 1;
+    min-width: 0;
+    padding: 0.45rem 0.15rem;
+    font-size: 0.72rem;
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 6px;
+  }
+
+  .desktop-text {
+    display: none;
+  }
+
+  .mobile-text {
+    display: inline;
   }
 
   /* [수정] 모바일에서 filter-bar의 위쪽 여백 제거 */
@@ -761,33 +819,20 @@ header {
     left: 0;
     min-width: 150px;
   }
-
-  /* Adjust header buttons for mobile */
-  .header-buttons {
-    gap: 0.3rem;
-    /* Reduce gap */
-  }
-
-  .calculator-button {
-    padding: 0.5rem 0.8rem;
-    /* Reduce padding */
-    font-size: 0.8rem;
-    /* Reduce font size */
-  }
 }
 
 @media (max-width: 375px) {
+  .title-image {
+    max-width: clamp(70px, 28vw, 100px);
+  }
+
   .header-buttons {
-    flex-direction: column;
-    gap: 0.3rem;
-    align-items: flex-end;
+    gap: 0.2rem;
   }
 
   .calculator-button {
-    width: 80%;
-    /* Optional: make them same width or just fit content */
-    text-align: center;
-    white-space: nowrap;
+    padding: 0.4rem 0.1rem;
+    font-size: 0.68rem;
   }
 }
 
@@ -1021,12 +1066,9 @@ header {
   }
 
   .calculator-button {
-    width: 70%;
-    /* Make it take full width */
-    padding: 0.45rem 0.8rem;
-    /* Adjust padding */
-    font-size: 0.8rem;
-    /* Adjust font size */
+    padding: 0.35rem 0.4rem;
+    font-size: 0.68rem;
+    min-width: 55px;
   }
 
   .preset-grid {

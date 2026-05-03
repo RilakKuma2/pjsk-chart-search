@@ -29,6 +29,7 @@ const UI_TEXT = {
     svgOption: "svg 파일로 채보 보기<br>※텍스트 검색 가능하나 일부 애드블록에서 긴 로딩",
     calculator: "프로세카 계산기",
     tierList: "서열표",
+    customChart: "자작채보",
     loading: "로딩 중...",
     error: "캐시삭제/ios웹앱(바로가기)면 재설치: ",
     noResults: "검색 결과가 없습니다.",
@@ -62,6 +63,7 @@ const UI_TEXT = {
     error: "エラーが発生しました: ",
     tierList: "Tier表",
     calculator: "周回効率計算機",
+    customChart: "創作譜面",
     calculatorUrl: "https://pjsk-calc.pages.dev",
     mirrorMode: "ミラーモード",
     noResults: "検索結果がありません。",
@@ -1279,7 +1281,11 @@ function App() {
             {UI_TEXT[language].tierList}
           </a>
           <a href="https://rilaksekai.com/" target="_blank" rel="noopener noreferrer" className="calculator-button">
-            {text.calculator}
+            <span className="desktop-text">{text.calculator}</span>
+            <span className="mobile-text">{language === 'jp' ? "計算機" : "셐계산기"}</span>
+          </a>
+          <a href="https://custom.rilaksekai.com/" target="_blank" rel="noopener noreferrer" className="calculator-button custom-chart-button">
+            {text.customChart}
           </a>
         </div>
       </header>
