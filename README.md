@@ -45,3 +45,14 @@ npm run preview -- --host
 `dist/` 전체를 도메인 루트에 배포합니다. 숫자/난이도를 포함한 페이지 주소는 `/index.html`로 SPA fallback을 설정하세요. 주소에 따라 필요한 화면만 로드합니다. Nginx 예시는 `scripts/1.nginx_setting.txt`에 있습니다.
 
 GitHub Pages용 `404.html`과 기존 서버 rewrite 호환용 `chart-viewer/index.html`도 빌드 시 생성됩니다. `chart-capture.js`는 이전 독립 HTML 시제품에서 모달을 재사용하기 위한 호환 진입점입니다. 운영 React 뷰어는 이를 거치지 않고 모달 컴포넌트를 직접 사용합니다.
+
+## 커스텀 채보
+
+`/custom/코드`로 접속하면 `https://custom2.rilaksekai.com/api/chart-json/코드`에서 뷰어용 JSON을 받아 표시합니다. 예: `/custom/xk8nt849r4drm_5vnibfymqya6gx`. 커스텀 제목·제작자·난이도·레벨을 유지하며, 배경은 응답의 실제 난이도로 바뀝니다. 데이터가 오기 전에는 MASTER 배경을 사용합니다.
+
+백엔드는 `calc-workers/custom-server`의 8880 서버입니다. 원본 캐시를 우선 이용하고, 기존 JSON→SUS 변환기와 일반 채보의 표시용 JSON 변환기를 연결합니다. WebP 이미지 생성은 필요하지 않습니다. 다른 서버를 사용하려면 빌드 환경의 `VITE_CUSTOM_CHART_API`에 서버 주소를 지정하세요. 원본 곡 검색은 일반 곡 목록이며 커스텀 채보 검색으로 바뀌지는 않습니다.
+
+
+`/custom`에서는 코드·공유 URL을 입력해 미리보기를 열 수 있습니다. 저장 목록은 `/custom/saved`, 공식 제작자 필터는 `/custom/saved/official`이며, 끝에 코드를 붙이면 해당 항목을 선택합니다. 한국어·일본어·음독·초성 검색, 난이도·레벨 필터, 정렬, 코드 복사를 지원합니다. PC는 목록/미리보기 분할 화면, 모바일은 선택한 행 아래에 미리보기를 표시합니다. 미리보기는 JSON 채보 뷰어만 사용하며 WebP 미리보기·다운로드는 제공하지 않습니다. 원본을 조회하지 못해 JSON을 생성하지 못한 채보는 목록에서 제외합니다.
+
+목록은 `https://custom2.rilaksekai.com/api/chart-list`의 작은 메타데이터를 사용합니다. 원본 JSON 전체를 내려받지 않습니다.

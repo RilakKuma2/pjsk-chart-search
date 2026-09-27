@@ -1,3 +1,5 @@
+import { CUSTOM_API } from '../custom-charts/api.js'
+
 export function createChartViewer(root, { themes, onCapture }) {
   let disposed=false;
   const cleanups=[], timers=new Set(), frames=new Set(), requests=new Set();
@@ -31,12 +33,19 @@ export function createChartViewer(root, { themes, onCapture }) {
   const t=(key,values={})=>(messages[language][key]||key).replace(/\{(\w+)\}/g,(_,name)=>values[name]??'');
   let songInfo=null,songCatalog=null,catalogPending=null,highlight=null,missingChart=null;
   const infoCache=new Map();
-  function songTitle(info){return (language==='ko'?info?.title_ko:info?.title_jp)||info?.title_jp||info?.title_ko||chart?.title||'';}
-  function songArtist(info){return (language==='ko'?info?.composer:info?.composer_jp)||info?.composer_jp||info?.composer||chart?.artist||'';}
+  function songTitle(info,forChart=false){
+    const base=(language==='ko'?info?.title_ko:info?.title_jp)||info?.title_jp||info?.title_ko;
+    if(forChart&&chart?.customChartId)return chart.customTitle?.trim()||({ko:'제목 없음',en:'Untitled',ja:'無題'}[language]);
+    return base||chart?.title||'';
+  }
+  function songArtist(info,forChart=false){
+    if(forChart&&chart?.customChartId)return chart.artist||'';
+    return (language==='ko'?info?.composer:info?.composer_jp)||info?.composer_jp||info?.composer||chart?.artist||'';
+  }
   function showNames(){
     if(disposed)return;
     if(!chart&&!songInfo)return;
-    const title=songTitle(songInfo),artist=songArtist(songInfo);
+    const title=songTitle(songInfo,true),artist=songArtist(songInfo,true);
     $('menu-song-title').textContent=title;$('menu-song-title').title=title;
     $('title').textContent=title+(artist?' - '+artist:'');$('jacket').alt=title;
     document.title=`${title} · ${t('viewer')}`;if(chart)schedule();
@@ -75,6 +84,8 @@ export function createChartViewer(root, { themes, onCapture }) {
   const canvas=$('canvas'),ctx=canvas.getContext('2d',{alpha:false}),scroll=document.scrollingElement;
   const ASSET='https://asset.rilaksekai.com',COL=272,LANE=16,TIME=360;
   const route=location.pathname.match(/^\/(\d+)(?:\/(easy|normal|hard|expert|master|append))?\/?$/i);
+  const customRoute=location.pathname.match(/^\/custom\/([A-Za-z0-9_-]{1,128})\/?$/i);
+  const customAPI=CUSTOM_API;
   let theme=themes[(route?.[2]||'master').toUpperCase()]??themes.MASTER;
   const color=(selector,property='fill')=>theme[selector][property];
   let chart,selected,rows=[],buckets=[],scale=1,baseUnit=0,unit=1,plotBottom=500,width=1,height=1,pixelRatio=1,frame=0,version=0,controller;
@@ -155,7 +166,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       entry.image.crossOrigin='anonymous';
       entry.image.onload=()=>{if(disposed)return;entry.ready=true;schedule();};
       entry.image.onerror=()=>{if(disposed)return;entry.failed=true;$('texture-status').textContent=t('textureError');schedule();};
-      entry.image.src=`${ASSET}/notes/${name}.png`;
+      entry.image.src=`${import.meta.env.BASE_URL}notes/${name}.png`;
     }
     return textures.get(name);
   }
@@ -402,7 +413,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       ctx.strokeStyle=color('.meta-line','stroke');ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,top);ctx.lineTo(buckets.length*COL+80,top);ctx.stroke();
       const cover=assets.get('cover');if(cover?.ready)ctx.drawImage(cover.image,80,top+32,192,192);
       ctx.fillStyle=color('.subtitle');ctx.textAlign='left';ctx.font='700 48px system-ui';ctx.fillText(`${chart.difficulty} ${chart.level}`,352,top+88);
-      ctx.fillStyle=color('.title');ctx.font='900 96px system-ui';ctx.fillText(`${songTitle(songInfo)}${songArtist(songInfo)?' - '+songArtist(songInfo):''}`,352,top+208);
+      ctx.fillStyle=color('.title');ctx.font='900 96px system-ui';ctx.fillText(`${songTitle(songInfo,true)}${songArtist(songInfo,true)?' - '+songArtist(songInfo,true):''}`,352,top+208);
     }
     if(metadata)return;
     $('position').textContent=t('section',{a:start+1,b:end+1,total:buckets.length});
@@ -426,7 +437,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       $('title').textContent=`${row.title}${chart.artist?' - '+chart.artist:''}`;$('difficulty').textContent=`${row.difficulty}${chart.level?' '+chart.level:''}`;
       textures.delete('cover');$('texture-status').textContent='';
       void loadCover(chart.jacket||`${ASSET}/cover/${String(chart.musicId).padStart(3,'0')}.webp`,id);
-      showNames();void loadSongInfo(chart.musicId);$('message').textContent='';
+      showNames();if(!chart.customChartId)void loadSongInfo(chart.musicId);$('message').textContent='';
       scale=1;baseUnit=0;resize();scroll.scrollLeft=0;scroll.scrollTop=0;schedule();
     }catch(error){if(id===version&&error.name!=='AbortError')$('message').textContent=t('loadError',{error:error.message});}
   }
@@ -500,7 +511,7 @@ export function createChartViewer(root, { themes, onCapture }) {
         if(n.kind==='trace')names.add(`notes_friction_among${n.gold?'_crtcl':n.direction?'_flick':'_long'}`);
         if(n.direction)names.add(arrowName(n));
       }
-      const pending=[...names].map(name=>[name,`${ASSET}/notes/${name}.png`]);
+      const pending=[...names].map(name=>[name,`${import.meta.env.BASE_URL}notes/${name}.png`]);
       if((plotBottom+64)*captureArea.unit<captureArea.y+captureArea.height)
         pending.push(['cover',currentChart.jacket||`${ASSET}/cover/${String(chart.musicId).padStart(3,'0')}.webp`]);
       async function loadOne([name,url]){
@@ -522,7 +533,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       const blob=await new Promise(resolve=>output.toBlob(resolve,'image/png'));output.width=output.height=1;
       if(!blob)throw new Error(t('imageFailed'));
       if(disposed)return;
-      await onCapture(blob,`${currentChart.musicId}-${currentChart.difficulty.toLowerCase()}${mirrored?'-mirror':''}-view.png`,language);
+      await onCapture(blob,`${currentChart.customChartId||currentChart.musicId}-${currentChart.difficulty.toLowerCase()}${mirrored?'-mirror':''}-view.png`,language);
       if(disposed)return;
       menu(false);$('capture-status').textContent='';
     }catch(error){if(!disposed)$('capture-status').textContent=error.message;}
@@ -601,7 +612,25 @@ export function createChartViewer(root, { themes, onCapture }) {
   $('mirror').onchange=()=>schedule();$('skill-fill').onchange=()=>schedule();
   listen(document,'scroll',pan,{passive:true});
   let resizeFrame=0;
+  let layoutWidth=scroll.clientWidth;
+  let viewportScale=window.visualViewport?.scale||1;
+  function viewportResize(){
+    const nextScale=window.visualViewport?.scale||1;
+    const scaleChanged=Math.abs(nextScale-viewportScale)>.001;
+    viewportScale=nextScale;
+    if(pinching||viewportSettling||scaleChanged){settleViewport();return;}
+    // Mobile browser chrome changes viewport height during vertical scroll.
+    // Keep the sharp layer and extend it instead of treating this as a pinch.
+    resizeFloatingUI();
+    pan();
+  }
   function scheduleResize(){
+    const nextWidth=scroll.clientWidth;
+    if(nextWidth===layoutWidth&&!pinching&&!viewportSettling){
+      width=Math.max(1,nextWidth);height=Math.max(1,scroll.clientHeight);
+      resizeFloatingUI();pan();return;
+    }
+    layoutWidth=nextWidth;
     if(pinching||viewportSettling){settleViewport();return;}
     if(!resizeFrame)resizeFrame=requestAnimationFrame(()=>{resizeFrame=0;resize();});
   }
@@ -620,7 +649,7 @@ export function createChartViewer(root, { themes, onCapture }) {
   listen(window,'touchend',endTouch,{passive:true});
   listen(window,'touchcancel',endTouch,{passive:true});
   listen(window,'resize',scheduleResize,{passive:true});
-  listen(window.visualViewport,'resize',settleViewport,{passive:true});
+  listen(window.visualViewport,'resize',viewportResize,{passive:true});
   listen(window.visualViewport,'scroll',()=>{resizeFloatingUI();pan();},{passive:true});
   resizeFloatingUI();
   // DPR may change without a CSS-size resize (e.g. moving between monitors).
@@ -635,7 +664,13 @@ export function createChartViewer(root, { themes, onCapture }) {
   localize();$('message').textContent=t('loading');
   (async()=>{try{
     const embedded=$('chart-bundle');
-    if(route){
+    if(customRoute){
+      const code=customRoute[1];
+      const data=await json(`${customAPI}/api/chart-json/${encodeURIComponent(code)}`);
+      if(disposed)return;
+      if(data.version!==3||!Array.isArray(data.notes)||!Array.isArray(data.columns))throw new Error('Invalid custom chart JSON');
+      rows=[{id:`custom:${code}`,musicId:data.musicId,title:data.title,difficulty:data.difficulty,level:data.level,data}];
+    }else if(route){
       const musicId=Number(route[1]),difficulty=(route[2]||'master').toLowerCase();
       const canonical=`/${musicId}/${difficulty}`;
       if(location.pathname!==canonical){location.replace(canonical+location.search+location.hash);return;}

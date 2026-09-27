@@ -50,6 +50,12 @@ server {
         proxy_set_header Host $host;
     }
 
+    location ~* ^/custom(?:/[A-Za-z0-9_-]+)*/?$ {
+        rewrite ^ /index.html break;
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+    }
+
     # 기본 주소('/') 요청은 무조건 React 앱으로 전달
     location = / {
         proxy_pass http://localhost:3000;

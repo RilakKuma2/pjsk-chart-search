@@ -1,12 +1,12 @@
 import { copyFileSync, mkdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { chartPath } from '../src/chart-route.js'
+import { chartPath, customPagePath } from '../src/chart-route.js'
 
 export function chartRoutes() {
   let outDir, isBuild, themePath
   const middleware = (req, res, next) => {
     const url = new URL(req.url, 'http://localhost')
-    const path = chartPath(url.pathname)
+    const path = customPagePath(url.pathname) || chartPath(url.pathname)
     if (path && path !== url.pathname) {
       res.writeHead(302, { Location: path + url.search })
       return res.end()

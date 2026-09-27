@@ -1284,7 +1284,7 @@ function App() {
             <span className="desktop-text">{text.calculator}</span>
             <span className="mobile-text">{language === 'jp' ? "計算機" : "셐계산기"}</span>
           </a>
-          <a href="https://custom.rilaksekai.com/" target="_blank" rel="noopener noreferrer" className="calculator-button custom-chart-button">
+          <a href="/custom" target="_blank" rel="noopener noreferrer" className="calculator-button custom-chart-button">
             {text.customChart}
           </a>
         </div>
