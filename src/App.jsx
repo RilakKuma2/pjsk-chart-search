@@ -68,7 +68,7 @@ const UI_TEXT = {
     mirrorMode: "ミラーモード",
     noResults: "検索結果がありません。",
     disclaimer: "本サイトは非公式ファンサイトです。<br>公式とは一切関係ありません。<br>データの間違い等による損害については責任を負いかねます。",
-    svgOption: "高画質(WebP)を使用<br><span style='font-size: 0.8em; color: gray'>(チェックを外すとSVGを使用)</span>",
+    svgOption: "元のSVGで譜面を表示<br>※テキスト検索可能。一部の広告ブロッカーでは読み込みに時間がかかります",
     hideKoreanSubTitle: "韓国語のタイトルを隠す",
     hideSpoilers: "ネタバレ(未実装曲)を隠す",
     bgOpacity: "背景の不透明度",
@@ -1665,7 +1665,7 @@ function App() {
                     return (
                       <a
                         key={diff}
-                        href={`https://${useWebP ? 'asset' : 'asset2'}.rilaksekai.com/${useWebP ? 'charts' : 'svg'}/${song.id}/${diff}${mirrorSuffix}.${useWebP ? 'html' : 'svg'}${cacheBuster}`}
+                        href={useWebP ? `/${Number(song.id)}/${diff}` : `https://asset2.rilaksekai.com/svg/${song.id}/${diff}${mirrorSuffix}.svg${cacheBuster}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={classNames}

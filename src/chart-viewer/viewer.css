@@ -1,0 +1,202 @@
+html.chart-viewer-page{font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;color:white;background:var(--chart-background);--chart-background:#d68898;color-scheme:dark;font-synthesis:none}.chart-viewer *{box-sizing:border-box}html.chart-viewer-page body{margin:0;min-height:100vh;min-height:100dvh;background:var(--chart-background)}.chart-viewer button,.chart-viewer input{font:inherit}.chart-viewer button{cursor:pointer;border:1px solid #ffffff32;border-radius:10px;color:white;background:#ffffff12;padding:9px 12px;font-size:13px}.chart-viewer button:hover{background:#ffffff26}.chart-viewer button:disabled{opacity:.4;cursor:default}.chart-viewer button:focus-visible,#scroll:focus-visible{outline:2px solid white;outline-offset:-2px}.chart-viewer button[aria-pressed=true]{background:#70e3d0;color:#123631;border-color:#70e3d0}[hidden]{display:none!important}#stage{position:relative;min-width:100%;min-height:100dvh}#scroll{position:relative;width:max-content;min-width:100%;touch-action:pan-x pan-y pinch-zoom}#space{position:relative;min-width:100%;min-height:100dvh}#space>canvas{position:absolute;left:0;top:0;pointer-events:none}#song-info{position:absolute;left:0;z-index:1;display:flex;align-items:center;gap:18px;border-top:1px solid #ffffffa0;background:var(--chart-background);padding:12px 24px;width:100%;min-width:320px}#jacket{display:block;object-fit:cover;flex:none;box-shadow:0 2px 8px #0002}#difficulty{margin:0 0 4px;font-size:14px;font-weight:700}.chart-viewer h1{font-size:clamp(18px,2.7vw,34px);margin:0;font-weight:800;white-space:nowrap}#song-info>div{min-width:0}#message{position:absolute;inset:40% 20px auto;text-align:center;font-size:15px;pointer-events:none;text-shadow:0 1px 5px #0009}#message:empty{display:none}#menu-toggle{position:fixed;z-index:5;left:max(14px,env(safe-area-inset-left));top:max(14px,env(safe-area-inset-top));width:44px;height:44px;border-radius:50%;background:#24212edb;box-shadow:0 3px 12px #0003;font-size:24px;padding:0}#menu{position:fixed;z-index:4;top:68px;left:max(14px,env(safe-area-inset-left));width:min(310px,calc(100vw - 28px));max-height:calc(100dvh - 88px);overflow:auto;background:#24212ef5;box-shadow:0 8px 24px #0004;border:1px solid #ffffff25;border-radius:16px;padding:18px;overscroll-behavior:contain}#menu h2{font-size:14px;margin:0 0 12px}.menu-row,.zoom{display:flex;align-items:center;justify-content:space-between;gap:8px}.menu-row{margin:16px 0;font-size:13px}.zoom button{width:34px;height:34px;padding:0;font-size:20px}.zoom output{font-size:12px;min-width:43px;text-align:center;font-variant-numeric:tabular-nums}#menu label{display:flex;align-items:center;gap:8px;margin:14px 0;font-size:13px}.chart-viewer input{accent-color:#70e3d0}#menu p{font-size:11px;line-height:1.5;color:#c6bfcc;margin:6px 0}#texture-status:empty{display:none}#mirror-control{position:fixed;z-index:3;right:max(22px,env(safe-area-inset-right));bottom:max(24px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:30px;background:#0009;box-shadow:0 3px 14px #0003;font-size:14px;font-weight:700;cursor:pointer}#mirror{position:absolute;width:1px;height:1px;opacity:0}.switch{width:48px;height:27px;border-radius:20px;background:#96969b;position:relative}.switch:after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;background:white;border-radius:50%;transition:transform .15s}#mirror:checked+.switch{background:#2196f3}#mirror:checked+.switch:after{transform:translateX(21px)}#mirror:focus-visible+.switch{outline:2px solid white;outline-offset:3px}@media(max-width:600px){#song-info{gap:12px;padding-left:16px}.chart-viewer h1{font-size:18px}#difficulty{font-size:11px}#mirror-control{right:14px;bottom:18px;padding:10px 12px}#menu-toggle{width:40px;height:40px}#menu{top:62px}}@media(prefers-reduced-motion:reduce){.switch:after{transition:none}}
+#scroll{touch-action:pan-x pan-y pinch-zoom}#song-info{min-width:0}#jacket{box-shadow:none}#song-info h1{line-height:1.1}#difficulty{margin:0 0 6px}
+.button-grid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.button-grid button{flex:1;min-width:58px;font-size:11px;padding:8px 6px}#menu details{border-top:1px solid #ffffff25;padding-top:12px;margin-top:12px}#menu summary{cursor:pointer;font-size:13px;font-weight:700}#menu summary:focus-visible{outline:2px solid white}#beat-intervals{font-size:12px;line-height:1.8;margin:10px 0}#judgment-options fieldset{margin:10px 0;border:1px solid #ffffff30;border-radius:8px;padding:4px 10px}#judgment-options legend{font-size:12px}#menu #judgment-options label{margin:8px 0;font-size:12px}#capture-status:empty{display:none}#capture-status{overflow-wrap:anywhere}
+
+#skill-jumps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}#skill-jumps button{min-width:0;padding:7px 0;font-size:12px}
+/* Zoom compensation is applied once to the floating layer, including its
+   available width/height, so menus keep a usable physical size when zoomed. */
+#floating-ui{position:fixed;z-index:5;left:0;top:0;transform-origin:top left;pointer-events:none}#floating-ui>*{pointer-events:auto}#floating-ui #menu-toggle{position:absolute;left:14px;top:14px;width:44px;height:44px}#floating-ui #menu{position:absolute;left:14px;top:68px;width:310px;max-width:calc(100% - 28px);max-height:calc(100% - 88px)}#floating-ui #mirror-control{position:absolute;right:22px;bottom:24px;padding:12px 16px}#beat-intervals{display:grid;gap:6px}#beat-intervals button{text-align:left;display:flex;flex-direction:column;gap:3px;width:100%}#beat-intervals button strong{font-size:13px;color:#a6efdf}#beat-intervals button span{font-size:11px;color:#cbc6d1}
+/* Keep overscan out of document bounds without adding a nested scroller. */
+#space{overflow:clip}
+
+html.chart-viewer-page{overflow:auto;scrollbar-color:#ffffff80 var(--chart-background);overflow-anchor:none}html.chart-viewer-page body{overflow:visible}#scroll,#space{overflow-anchor:none}
+
+.menu-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.menu-heading h2{margin:0!important}#capture-view{display:flex;align-items:center;justify-content:center;width:36px;height:36px;padding:6px}#difficulties{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}#difficulties button{flex:none;padding:0;min-width:0}.chart-capture-root canvas{pointer-events:auto}
+
+/* Difficulty circles from pjsk-chart-search/src/App.css. */
+.circle,
+.circle-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: 900;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+.circle:hover {
+  transform: scale(1.1);
+}
+
+.circle-placeholder {
+  /* background-color: #5c5c7d;*/
+  border: 0px dashed #666;
+}
+
+/*.circle.easy { background-color: #11dd77; color: #444466; border: 3px solid #8aeebc; }
+.circle.normal { background-color: #33ccff; color: #444466; border: 3px solid #9ae6ff; }
+.circle.hard { background-color: #ffcc00; color: #444466; border: 3px solid #ffe680; }
+.circle.expert { background-color: #ff4477; color: #444466; border: 3px solid #ff99b5; }
+.circle.master { background-color: #cc33ff; color: #444466; border: 3px solid #d99cef; }
+.circle.append { background: linear-gradient(to bottom right, #ad92fd, #fe7bde); color: #444466; border: 3px solid #febdf1; }*/
+
+
+/* Hover/Active/Filtered Styles AND Inactive Border Styles */
+.circle.easy,
+.circle.easy:hover,
+.circle.easy:active,
+.circle.easy.filtered {
+  border: 3.5px solid #8aeebc;
+}
+
+.circle.easy:hover,
+.circle.easy:active,
+.circle.easy.filtered {
+  background-color: #11dd77;
+  color: #444466;
+  box-shadow: 0 0 8px 2px #8f8e91;
+}
+
+.circle.normal,
+.circle.normal:hover,
+.circle.normal:active,
+.circle.normal.filtered {
+  border: 3.5px solid #9ae6ff;
+}
+
+.circle.normal:hover,
+.circle.normal:active,
+.circle.normal.filtered {
+  background-color: #33ccff;
+  color: #444466;
+  box-shadow: 0 0 8px 2px #8f8e91;
+}
+
+.circle.hard,
+.circle.hard:hover,
+.circle.hard:active,
+.circle.hard.filtered {
+  border: 3.5px solid #ffe680;
+}
+
+.circle.hard:hover,
+.circle.hard:active,
+.circle.hard.filtered {
+  background-color: #ffcc00;
+  color: #444466;
+  box-shadow: 0 0 8px 2px #8f8e91;
+}
+
+.circle.expert,
+.circle.expert:hover,
+.circle.expert:active,
+.circle.expert.filtered {
+  border: 3.5px solid #ff99b5;
+}
+
+.circle.expert:hover,
+.circle.expert:active,
+.circle.expert.filtered {
+  background-color: #ff4477;
+  color: #444466;
+  box-shadow: 0 0 8px 2px #8f8e91;
+}
+
+.circle.master,
+.circle.master:hover,
+.circle.master:active,
+.circle.master.filtered {
+  border: 3.5px solid #d99cef;
+}
+
+.circle.master:hover,
+.circle.master:active,
+.circle.master.filtered {
+  background-color: #cc33ff;
+  color: #444466;
+  box-shadow: 0 0 8px 2px #8f8e91;
+}
+
+.circle.append,
+.circle.append:hover,
+.circle.append:active,
+.circle.append.filtered {
+  border: 3.5px solid #febdf1;
+}
+
+.circle.append:hover,
+.circle.append:active,
+.circle.append.filtered {
+  background: linear-gradient(to bottom right, #ad92fd, #fe7bde);
+  color: #444466;
+  box-shadow: 0 0 8px 2px #8f8e91;
+}
+
+/* Base Inactive Colors (Hollow/Transparent Background) */
+.circle.easy {
+  color: white;
+  border-color: #13d675;
+  background-color: transparent;
+}
+
+.circle.normal {
+  color: white;
+  border-color: #33ccff;
+  background-color: transparent;
+}
+
+.circle.hard {
+  color: white;
+  border-color: #ffcc00;
+  background-color: transparent;
+}
+
+.circle.expert {
+  color: white;
+  border-color: #ff4179;
+  background-color: transparent;
+}
+
+.circle.master {
+  color: white;
+  border-color: #cb34ff;
+  background-color: transparent;
+}
+
+.circle.append {
+  color: white;
+  background-color: transparent;
+  background: linear-gradient(#5c5c7d, #5c5c7d) padding-box, linear-gradient(to bottom right, #ad92fd, #fe7bde) border-box;
+  border: 3.5px solid transparent;
+  /* Required for gradient border */
+}
+
+/*.circle.easy { background-color: #4CAF50; color: white; }
+.circle.normal { background-color: #2196F3; color: white; }
+.circle.hard { background-color: #FFC107; color: white; }
+.circle.expert { background-color: #F44336; color: white; }
+.circle.master { background-color: #9C27B0; color: white; }
+.circle.append { background: linear-gradient(to bottom right, #987ee0, #fe7bde); color: white; }*/
+
+@media(max-width:768px){#difficulties .circle{width:35px;height:35px;font-size:.95rem}}
+.menu-heading{position:relative;gap:7px}.menu-heading>button{flex:none;width:32px!important;height:34px!important;padding:5px!important;display:flex;align-items:center;justify-content:center}.menu-heading #menu-song-title{min-width:0;flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.heading-popover{position:absolute;z-index:8;top:40px;left:0;width:100%;padding:10px;background:#363344;border:1px solid #ffffff40;border-radius:12px;box-shadow:0 6px 18px #0008}#song-search-panel{left:36px;width:calc(100% - 36px)}#song-search{width:100%;min-width:0;background:#fff;color:#343246;padding:9px;border:0;border-radius:6px;font-size:13px}#search-results{max-height:230px;overflow:auto;margin-top:8px;font-size:12px;overscroll-behavior:contain}#search-results button{width:100%;text-align:left;margin-bottom:5px;padding:8px;display:flex;align-items:center;gap:8px}#search-results img{width:40px;height:40px;flex:none;object-fit:cover;border-radius:4px;background:#ffffff12}#search-results .search-song-info{display:flex;flex-direction:column;gap:4px;min-width:0;overflow-wrap:anywhere}#search-results button strong{font-size:12px}#search-results button span{font-size:11px;color:#d4ccd8}#language-panel{left:auto;right:0;width:150px;display:grid;gap:5px}#jump-marker{position:absolute;height:5px;transform:translateY(-50%);background:#fff273;box-shadow:0 0 0 2px #392c49,0 0 14px 4px #ffe54bb0;z-index:2;pointer-events:none}#jump-marker span{position:absolute;left:0;bottom:9px;background:#fff273;color:#30233e;white-space:nowrap;border-radius:4px;padding:3px 6px;font-size:12px;font-weight:800;box-shadow:0 1px 5px #0008}#jump-marker.pulse{animation:jump-highlight .65s ease-in-out 3}@keyframes jump-highlight{50%{opacity:.35;box-shadow:0 0 0 3px #fff,0 0 18px 6px #ffe54b}}@media(prefers-reduced-motion:reduce){#jump-marker.pulse{animation:none}}
+/* Fixed rows let the song list render only the visible window. */
+#search-results{height:230px;overflow-anchor:none}#search-results button{height:58px;margin:0 0 6px;overflow:hidden}#search-results button strong,#search-results button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}#search-results .search-song-info{flex:1;gap:3px;overflow:hidden}#search-results button[aria-current=true]{border-color:#70e3d0;background:#70e3d020}
+
+/* Keep semantic song text available without a separately composited footer. */
+#song-info{position:absolute;left:0;top:0;width:1px;height:1px;min-width:0;padding:0;margin:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;pointer-events:none}
+html.chart-viewer-page::-webkit-scrollbar-corner{background:var(--chart-background)}
+/* scrollbar-color inherits: keep the chart's track color out of menus. */
+#floating-ui{scrollbar-color:#938caa #1c1926}
+:is(#menu,#search-results,#beat-intervals){scrollbar-width:thin}
+:is(#menu,#search-results,#beat-intervals)::-webkit-scrollbar{width:8px;height:8px}
+:is(#menu,#search-results,#beat-intervals)::-webkit-scrollbar-track,
+:is(#menu,#search-results,#beat-intervals)::-webkit-scrollbar-corner{background:#1c1926}
+:is(#menu,#search-results,#beat-intervals)::-webkit-scrollbar-thumb{background:#938caa;border:2px solid transparent;background-clip:padding-box;border-radius:8px}
+:is(#menu,#search-results,#beat-intervals)::-webkit-scrollbar-thumb:hover{background-color:#b8b1cb}
+#beat-intervals.scrollable{max-height:min(280px,40dvh);overflow-y:auto;overscroll-behavior:contain;align-content:start;grid-auto-rows:max-content;padding-right:5px;scrollbar-width:thin}#beat-intervals.scrollable:focus-visible{outline:2px solid #70e3d0;outline-offset:2px}

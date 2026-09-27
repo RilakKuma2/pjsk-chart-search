@@ -39,6 +39,17 @@ server {
         proxy_set_header Host $host;
     }
     
+    # 주소별 진입 코드에서 채보 React 컴포넌트만 불러옵니다.
+    location ~ ^/([0-9]+)/?$ {
+        return 302 /$1/master$is_args$args;
+    }
+
+    location ~* ^/[0-9]+/(easy|normal|hard|expert|master|append)/?$ {
+        rewrite ^ /index.html break;
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+    }
+
     # 기본 주소('/') 요청은 무조건 React 앱으로 전달
     location = / {
         proxy_pass http://localhost:3000;

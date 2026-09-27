@@ -1,33 +1,47 @@
+# 프로세카 채보 검색 · 채보 뷰어
 
+```sh
+npm ci
+npm start
 ```
-npm install
 
+개발 서버는 `0.0.0.0:6132`에서 열립니다. 같은 내부망에서는 `http://PC의내부IP:6132`로 접속할 수 있습니다.
+
+- `/`: 곡 검색 화면
+- `/74/master`: 곡 74의 MASTER 채보
+- `/610/append`: 곡 610의 APPEND 채보
+- `/74`: `/74/master`로 이동 (앞자리 0·대문자 난이도도 정규화)
+
+## 구조와 데이터
+
+채보 화면은 `src/chart-viewer/ChartViewer.jsx`의 독립 React 컴포넌트입니다. `src/entry.js`가 URL에 따라 검색 앱 또는 채보 컴포넌트만 불러옵니다. 채보 직접 접속 시 검색 앱의 코드·CSS·폰트·데이터 로더는 실행하지 않습니다. React 런타임은 공유하며, 캡처 편집기는 카메라를 누를 때 불러옵니다.
+
+- `ChartSurface.jsx`: 채보 캔버스와 메뉴의 JSX 구조
+- `engine.js`: 캔버스 렌더링·확대·스크롤·메뉴 동작. 컴포넌트를 닫으면 이벤트, 요청, 타이머와 캔버스 자원을 정리합니다.
+- `themes.json`, `viewer.css`: 기존 SVG의 색상 프리셋과 화면 스타일
+- `src/components/CaptureModal.tsx`: 정리사이트의 캡처·편집 모달 재사용
+
+곡명·작곡가·출시일·검색 목록은 `https://api.rilaksekai.com/api/songs`에서 직접 받습니다. 뷰어 안에서는 한 번의 요청 결과를 공유하며, 곡별 정보 JSON을 미리 생성할 필요가 없습니다. API 응답이 늦거나 실패해도 채보 그리기는 별도로 진행하고 채보에 포함된 이름을 사용합니다.
+
+노트 데이터는 `https://asset.rilaksekai.com/charts/074/index.json`과 해당 난이도의 JSON에서, 이미지도 같은 자산 서버에서 직접 읽습니다. **채보 노트 JSON 생성은 기존 백엔드 파이프라인을 그대로 사용합니다.** 자산·API 서버에서 접속 Origin의 CORS를 허용해야 합니다.
+
+`sekai-statics_local/chart_html/`은 독립 HTML 시제품으로 남아 있습니다. 운영 화면은 이 저장소의 React 소스를 수정하며, 시제품 파일을 복사하는 동기화 단계는 없습니다.
+
+## 화면 조작
+
+- 검색은 최신 출시일순이며, 열면 현재 곡으로 스크롤합니다. 보이는 구간 주변만 렌더링하고 썸네일은 지연 로딩합니다.
+- PC의 Ctrl/Cmd+휠·+/−는 채보만 확대·축소합니다. 이동 시 배율이 초기화되며 Ctrl/Cmd+0으로 기본 배율에 맞춥니다. 모바일 터치 핀치는 브라우저 기본 동작을 유지합니다.
+- 메뉴에서 난이도, BPM·스킬 구간 이동, 판정 강화 표시, 스킬 구간 색칠을 선택합니다. BPM 변화가 많으면 목록 안에서 스크롤합니다.
+- 카메라는 현재 화면을 캡처하여 편집·다운로드 모달을 엽니다.
+- 브라우저 언어에 따라 한국어·영어·일본어로 시작하며 지구본 버튼으로 바꿀 수 있습니다. 한국어에서는 한국어 곡명·작곡가, 그 외에는 일본어 원문을 표시합니다.
+
+## 빌드 · 배포
+
+```sh
 npm run build
+npm run preview -- --host
+```
 
-# 채보 데이터
-```
-  {
-    "id": "043",
-    "title_ko": "넥스트 네스트",
-    "title_jp": "ネクストネスト",
-    "title_hi": "ねくすとねすと",
-    "title_hangul": "네쿠스토네스토",
-    "unit_code": "VS",
-    "release_date": "2020/09/30",
-    "bpm": 128,
-    "levels": {
-      "easy": 6,
-      "normal": 13,
-      "hard": 18,
-      "expert": 27,
-      "master": 30,
-      "append": null
-    },
-    "length": "2:07",
-    "mv_type": "MV X",
-    "composer": "오월 이 절정",
-    "composer_jp": "さつき が てんこもり",
-    "classification": "기존곡"
-  },
-```
-svg 채보파일 (참조 : https://pypi.org/project/pjsekai.scores/ https://github.com/paralleltree/Ched)
+`dist/` 전체를 도메인 루트에 배포합니다. 숫자/난이도를 포함한 페이지 주소는 `/index.html`로 SPA fallback을 설정하세요. 주소에 따라 필요한 화면만 로드합니다. Nginx 예시는 `scripts/1.nginx_setting.txt`에 있습니다.
+
+GitHub Pages용 `404.html`과 기존 서버 rewrite 호환용 `chart-viewer/index.html`도 빌드 시 생성됩니다. `chart-capture.js`는 이전 독립 HTML 시제품에서 모달을 재사용하기 위한 호환 진입점입니다. 운영 React 뷰어는 이를 거치지 않고 모달 컴포넌트를 직접 사용합니다.

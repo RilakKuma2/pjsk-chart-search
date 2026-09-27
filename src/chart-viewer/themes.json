@@ -1,0 +1,788 @@
+{
+  "EASY": {
+    ".bar-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "4"
+    },
+    ".bar-count-flag": {
+      "stroke": "#ffffff",
+      "stroke-width": "4"
+    },
+    ".bar-count-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".beat-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".lane-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".event-flag": {
+      "stroke": "#fee300",
+      "stroke-width": "4"
+    },
+    ".event-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#fee300",
+      "text-anchor": "start"
+    },
+    ".speed-line": {
+      "stroke": "#ff33ff",
+      "stroke-width": "1"
+    },
+    ".speed-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#ff33ff",
+      "text-anchor": "end"
+    },
+    ".lyric-text": {
+      "font-size": "12px",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".slide": {
+      "fill": "#c9fce2cc"
+    },
+    ".slide-critical": {
+      "fill": "#fcf1c3cc"
+    },
+    ".decoration": {
+      "fill": "url(#decoration-gradient)"
+    },
+    "#decoration-gradient": {
+      "--color-start": "#c9fce299",
+      "--color-stop": "#c9fce233"
+    },
+    ".decoration-critical": {
+      "fill": "url(#decoration-critical-gradient)"
+    },
+    "#decoration-critical-gradient": {
+      "--color-start": "#fcf1c399",
+      "--color-stop": "#fcf1c333"
+    },
+    ".tick-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#e2e2e2",
+      "text-anchor": "end"
+    },
+    ".tick-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".meta-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "2"
+    },
+    ".title": {
+      "font-size": "96px",
+      "font-weight": "900",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".subtitle": {
+      "font-size": "48px",
+      "font-weight": "700",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".lane": {
+      "fill": "#8cd79d"
+    },
+    ".background": {
+      "fill": "#5daf71"
+    },
+    ".meta": {
+      "fill": "#5daf71"
+    },
+    ".skill-end-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#69f0ae",
+      "text-anchor": "start"
+    },
+    ".skill-end-flag": {
+      "stroke": "#69f0ae",
+      "stroke-width": "4"
+    },
+    ".skill-judg-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#b9f6ca",
+      "text-anchor": "start"
+    },
+    ".skill-judg-flag": {
+      "stroke": "#b9f6ca",
+      "stroke-width": "4"
+    }
+  },
+  "NORMAL": {
+    ".bar-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "4"
+    },
+    ".bar-count-flag": {
+      "stroke": "#ffffff",
+      "stroke-width": "4"
+    },
+    ".bar-count-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".beat-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".lane-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".event-flag": {
+      "stroke": "#fee300",
+      "stroke-width": "4"
+    },
+    ".event-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#fee300",
+      "text-anchor": "start"
+    },
+    ".speed-line": {
+      "stroke": "#ff33ff",
+      "stroke-width": "1"
+    },
+    ".speed-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#ff33ff",
+      "text-anchor": "end"
+    },
+    ".lyric-text": {
+      "font-size": "12px",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".slide": {
+      "fill": "#c9fce2cc"
+    },
+    ".slide-critical": {
+      "fill": "#fcf1c3cc"
+    },
+    ".decoration": {
+      "fill": "url(#decoration-gradient)"
+    },
+    "#decoration-gradient": {
+      "--color-start": "#c9fce299",
+      "--color-stop": "#c9fce233"
+    },
+    ".decoration-critical": {
+      "fill": "url(#decoration-critical-gradient)"
+    },
+    "#decoration-critical-gradient": {
+      "--color-start": "#fcf1c399",
+      "--color-stop": "#fcf1c333"
+    },
+    ".tick-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#e2e2e2",
+      "text-anchor": "end"
+    },
+    ".tick-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".meta-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "2"
+    },
+    ".title": {
+      "font-size": "96px",
+      "font-weight": "900",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".subtitle": {
+      "font-size": "48px",
+      "font-weight": "700",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".lane": {
+      "fill": "#a6caef"
+    },
+    ".background": {
+      "fill": "#6da3d0"
+    },
+    ".meta": {
+      "fill": "#6da3d0"
+    },
+    ".skill-end-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#69f0ae",
+      "text-anchor": "start"
+    },
+    ".skill-end-flag": {
+      "stroke": "#69f0ae",
+      "stroke-width": "4"
+    },
+    ".skill-judg-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#b9f6ca",
+      "text-anchor": "start"
+    },
+    ".skill-judg-flag": {
+      "stroke": "#b9f6ca",
+      "stroke-width": "4"
+    }
+  },
+  "HARD": {
+    ".bar-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "4"
+    },
+    ".bar-count-flag": {
+      "stroke": "#ffffff",
+      "stroke-width": "4"
+    },
+    ".bar-count-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".beat-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".lane-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".event-flag": {
+      "stroke": "#fee300",
+      "stroke-width": "4"
+    },
+    ".event-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#fee300",
+      "text-anchor": "start"
+    },
+    ".speed-line": {
+      "stroke": "#ff33ff",
+      "stroke-width": "1"
+    },
+    ".speed-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#ff33ff",
+      "text-anchor": "end"
+    },
+    ".lyric-text": {
+      "font-size": "12px",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".slide": {
+      "fill": "#c9fce2cc"
+    },
+    ".slide-critical": {
+      "fill": "#fcf1c3cc"
+    },
+    ".decoration": {
+      "fill": "url(#decoration-gradient)"
+    },
+    "#decoration-gradient": {
+      "--color-start": "#c9fce299",
+      "--color-stop": "#c9fce233"
+    },
+    ".decoration-critical": {
+      "fill": "url(#decoration-critical-gradient)"
+    },
+    "#decoration-critical-gradient": {
+      "--color-start": "#fcf1c399",
+      "--color-stop": "#fcf1c333"
+    },
+    ".tick-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#e2e2e2",
+      "text-anchor": "end"
+    },
+    ".tick-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".meta-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "2"
+    },
+    ".title": {
+      "font-size": "96px",
+      "font-weight": "900",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".subtitle": {
+      "font-size": "48px",
+      "font-weight": "700",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".lane": {
+      "fill": "#f1bc8f"
+    },
+    ".background": {
+      "fill": "#d8a06c"
+    },
+    ".meta": {
+      "fill": "#d8a06c"
+    },
+    ".skill-end-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#69f0ae",
+      "text-anchor": "start"
+    },
+    ".skill-end-flag": {
+      "stroke": "#69f0ae",
+      "stroke-width": "4"
+    },
+    ".skill-judg-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#b9f6ca",
+      "text-anchor": "start"
+    },
+    ".skill-judg-flag": {
+      "stroke": "#b9f6ca",
+      "stroke-width": "4"
+    }
+  },
+  "EXPERT": {
+    ".bar-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "4"
+    },
+    ".bar-count-flag": {
+      "stroke": "#ffffff",
+      "stroke-width": "4"
+    },
+    ".bar-count-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".beat-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".lane-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".event-flag": {
+      "stroke": "#fee300",
+      "stroke-width": "4"
+    },
+    ".event-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#fee300",
+      "text-anchor": "start"
+    },
+    ".speed-line": {
+      "stroke": "#ff33ff",
+      "stroke-width": "1"
+    },
+    ".speed-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#ff33ff",
+      "text-anchor": "end"
+    },
+    ".lyric-text": {
+      "font-size": "12px",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".slide": {
+      "fill": "#c9fce2cc"
+    },
+    ".slide-critical": {
+      "fill": "#fcf1c3cc"
+    },
+    ".decoration": {
+      "fill": "url(#decoration-gradient)"
+    },
+    "#decoration-gradient": {
+      "--color-start": "#c9fce299",
+      "--color-stop": "#c9fce233"
+    },
+    ".decoration-critical": {
+      "fill": "url(#decoration-critical-gradient)"
+    },
+    "#decoration-critical-gradient": {
+      "--color-start": "#fcf1c399",
+      "--color-stop": "#fcf1c333"
+    },
+    ".tick-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#e2e2e2",
+      "text-anchor": "end"
+    },
+    ".tick-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".meta-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "2"
+    },
+    ".title": {
+      "font-size": "96px",
+      "font-weight": "900",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".subtitle": {
+      "font-size": "48px",
+      "font-weight": "700",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".lane": {
+      "fill": "#f0b8c2"
+    },
+    ".background": {
+      "fill": "#d68898"
+    },
+    ".meta": {
+      "fill": "#d68898"
+    },
+    ".skill-end-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#69f0ae",
+      "text-anchor": "start"
+    },
+    ".skill-end-flag": {
+      "stroke": "#69f0ae",
+      "stroke-width": "4"
+    },
+    ".skill-judg-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#b9f6ca",
+      "text-anchor": "start"
+    },
+    ".skill-judg-flag": {
+      "stroke": "#b9f6ca",
+      "stroke-width": "4"
+    }
+  },
+  "MASTER": {
+    ".bar-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "4"
+    },
+    ".bar-count-flag": {
+      "stroke": "#ffffff",
+      "stroke-width": "4"
+    },
+    ".bar-count-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".beat-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".lane-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".event-flag": {
+      "stroke": "#fee300",
+      "stroke-width": "4"
+    },
+    ".event-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#fee300",
+      "text-anchor": "start"
+    },
+    ".speed-line": {
+      "stroke": "#ff33ff",
+      "stroke-width": "1"
+    },
+    ".speed-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#ff33ff",
+      "text-anchor": "end"
+    },
+    ".lyric-text": {
+      "font-size": "12px",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".slide": {
+      "fill": "#c9fce2cc"
+    },
+    ".slide-critical": {
+      "fill": "#fcf1c3cc"
+    },
+    ".decoration": {
+      "fill": "url(#decoration-gradient)"
+    },
+    "#decoration-gradient": {
+      "--color-start": "#c9fce299",
+      "--color-stop": "#c9fce233"
+    },
+    ".decoration-critical": {
+      "fill": "url(#decoration-critical-gradient)"
+    },
+    "#decoration-critical-gradient": {
+      "--color-start": "#fcf1c399",
+      "--color-stop": "#fcf1c333"
+    },
+    ".tick-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#e2e2e2",
+      "text-anchor": "end"
+    },
+    ".tick-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".meta-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "2"
+    },
+    ".title": {
+      "font-size": "96px",
+      "font-weight": "900",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".subtitle": {
+      "font-size": "48px",
+      "font-weight": "700",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#ffffff",
+      "text-anchor": "start"
+    },
+    ".lane": {
+      "fill": "#d5bdef"
+    },
+    ".background": {
+      "fill": "#ab7ed3"
+    },
+    ".meta": {
+      "fill": "#ab7ed3"
+    },
+    ".skill-end-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#69f0ae",
+      "text-anchor": "start"
+    },
+    ".skill-end-flag": {
+      "stroke": "#69f0ae",
+      "stroke-width": "4"
+    },
+    ".skill-judg-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#b9f6ca",
+      "text-anchor": "start"
+    },
+    ".skill-judg-flag": {
+      "stroke": "#b9f6ca",
+      "stroke-width": "4"
+    }
+  },
+  "APPEND": {
+    ".bar-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "4"
+    },
+    ".bar-count-flag": {
+      "stroke": "#764c98",
+      "stroke-width": "4"
+    },
+    ".bar-count-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#764c98",
+      "text-anchor": "start"
+    },
+    ".beat-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".lane-line": {
+      "stroke": "#e2e2e2",
+      "stroke-width": "1"
+    },
+    ".event-flag": {
+      "stroke": "#ea0064",
+      "stroke-width": "4"
+    },
+    ".event-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ea0064",
+      "text-anchor": "start"
+    },
+    ".speed-line": {
+      "stroke": "#ff33ff",
+      "stroke-width": "1"
+    },
+    ".speed-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#ff33ff",
+      "text-anchor": "end"
+    },
+    ".lyric-text": {
+      "font-size": "12px",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#764c98",
+      "text-anchor": "start"
+    },
+    ".slide": {
+      "fill": "#c9fce2cc"
+    },
+    ".slide-critical": {
+      "fill": "#fcf1c3cc"
+    },
+    ".decoration": {
+      "fill": "url(#decoration-gradient)"
+    },
+    "#decoration-gradient": {
+      "--color-start": "#c9fce299",
+      "--color-stop": "#c9fce233"
+    },
+    ".decoration-critical": {
+      "fill": "url(#decoration-critical-gradient)"
+    },
+    "#decoration-critical-gradient": {
+      "--color-start": "#fcf1c399",
+      "--color-stop": "#fcf1c333"
+    },
+    ".tick-text": {
+      "font-size": "12px",
+      "font-family": "Avenir",
+      "fill": "#764c98",
+      "text-anchor": "end"
+    },
+    ".tick-line": {
+      "stroke": "#764c98",
+      "stroke-width": "1"
+    },
+    ".meta-line": {
+      "stroke": "#ffffff",
+      "stroke-width": "2"
+    },
+    ".title": {
+      "font-size": "96px",
+      "font-weight": "900",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#764c98",
+      "text-anchor": "start"
+    },
+    ".subtitle": {
+      "font-size": "48px",
+      "font-weight": "700",
+      "font-family": "ヒラギノ角ゴシック",
+      "fill": "#764c98",
+      "text-anchor": "start"
+    },
+    ".lane": {
+      "fill": "#d1c0e3"
+    },
+    ".background": {
+      "fill": "#e7dff1"
+    },
+    ".meta": {
+      "fill": "#e7dff1"
+    },
+    ".skill-end-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#00b33c",
+      "text-anchor": "start"
+    },
+    ".skill-end-flag": {
+      "stroke": "#00b33c",
+      "stroke-width": "4"
+    },
+    ".skill-judg-text": {
+      "font-size": "12px",
+      "font-weight": "900",
+      "font-family": "Avenir",
+      "fill": "#ffb300",
+      "text-anchor": "start"
+    },
+    ".skill-judg-flag": {
+      "stroke": "#ffb300",
+      "stroke-width": "4"
+    }
+  }
+}
