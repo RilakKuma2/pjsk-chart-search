@@ -2,13 +2,29 @@
 <html lang="ko">
 
 <head>
+  <script>(() => {
+          function chartPath(pathname) {
+	if (/^\/custom(?:\/saved(?:\/.*)?)?\/?$/i.test(pathname)) return null;
+	const custom = pathname.match(/^\/custom\/([A-Za-z0-9_-]{1,128})\/?$/i);
+	if (custom) return `/custom/${custom[1]}`;
+	const match = pathname.match(/^\/(\d+)(?:\/(easy|normal|hard|expert|master|append))?\/?$/i);
+	return match ? `/${Number(match[1])}/${(match[2] || "master").toLowerCase()}` : null;
+}
+          const path = chartPath(location.pathname);
+          if (!path) return;
+          const colors = {"EASY":"#5daf71","NORMAL":"#6da3d0","HARD":"#d8a06c","EXPERT":"#d68898","MASTER":"#ab7ed3","APPEND":"#e7dff1"};
+          const color = colors[path.split('/').pop().toUpperCase()] || colors.MASTER;
+          document.documentElement.style.setProperty('--chart-background', color);
+          document.documentElement.style.backgroundColor = 'var(--chart-background)';
+        })();</script>
+
   <meta charset="UTF-8" />
   <link rel="icon" type="image/x-icon" href="/ico/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>프로세카 채보</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <script type="module" crossorigin src="/assets/index-Du5b4Tby.js"></script>
+  <script type="module" crossorigin src="/assets/index-C24_geI8.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/preload-helper-CcBpSuLE.js">
 </head>
 
