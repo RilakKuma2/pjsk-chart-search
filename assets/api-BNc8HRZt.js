@@ -1,1 +1,0 @@
-const e=`https://custom2.rilaksekai.com`.replace(/\/$/,``),t=e=>`/custom/${encodeURIComponent(e)}`;async function n(t,n){let r=await fetch(`${e}${t}`,{signal:n}),i=await r.json();if(!r.ok)throw Error(i.detail||`HTTP ${r.status}`);return i}export{t as n,n as r,e as t};
