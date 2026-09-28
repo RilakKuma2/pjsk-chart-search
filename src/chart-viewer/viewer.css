@@ -202,3 +202,9 @@ html.chart-viewer-page::-webkit-scrollbar-corner{background:var(--chart-backgrou
 #beat-intervals.scrollable{max-height:min(280px,40dvh);overflow-y:auto;overscroll-behavior:contain;align-content:start;grid-auto-rows:max-content;padding-right:5px;scrollbar-width:thin}#beat-intervals.scrollable:focus-visible{outline:2px solid #70e3d0;outline-offset:2px}
 
 .custom-home-link{display:block;color:#70e3d0;font-size:13px;margin:10px 0;text-decoration:none}
+
+.chart-play-here{position:absolute;z-index:4;transform:scale(var(--popup-scale,1)) translate(-50%,-110%);transform-origin:0 0;background:#202239!important;color:white;border:2px solid #72e6d3!important;white-space:nowrap;pointer-events:auto!important}
+
+#message.chart-download-status{position:fixed;inset:0;z-index:30;margin:0;display:flex;align-items:center;justify-content:center;gap:12px;background:#151525cc;color:white;pointer-events:auto}
+.chart-download-status::before{content:'';width:24px;height:24px;border:3px solid #ffffff40;border-top-color:#70e3d0;border-radius:50%;animation:chart-download-spin .8s linear infinite}
+@keyframes chart-download-spin{to{transform:rotate(360deg)}}

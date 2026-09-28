@@ -1,6 +1,6 @@
-import { CUSTOM_API } from '../custom-charts/api.js'
+import { CUSTOM_API, isCustomChartCode, customChartUrl } from '../custom-charts/api.js'
 
-export function createChartViewer(root, { themes, onCapture }) {
+export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   let disposed=false;
   const cleanups=[], timers=new Set(), frames=new Set(), requests=new Set();
   const lifetime=new AbortController();
@@ -25,9 +25,9 @@ export function createChartViewer(root, { themes, onCapture }) {
   function createController(){const request=new AbortController();requests.add(request);return request;}
 
   const messages={
-    ko:{menu:'메뉴',search:'곡 검색',searchPlaceholder:'곡명 · 작곡가 · 곡 번호',language:'언어',capture:'현재 화면 캡처',difficulty:'난이도',bpmJump:'BPM · 구간 이동',skillJump:'스킬 구간 이동',judgment:'판정 강화 표시',judgmentHelp:'선택한 조건의 종료선을 표시합니다. 적용 구간은 스킬 구간 색칠을 켜면 표시됩니다.',reset:'기본 조건으로',skillFill:'스킬 구간 색칠',mirror:'미러',loading:'채보 불러오는 중…',viewer:'채보 보기',interval:'8분음표 간격 {ms}ms',skill:'스킬 {n}',seconds:'{n}초',judgmentFrom:'{judge} 이상 → PERFECT',loadError:'채보를 불러오지 못했어요 ({error}).',missing:'{id}번 곡의 {difficulty} 채보가 없어요',empty:'채보 목록 없음',noResults:'검색 결과가 없어요',searchLoading:'검색 목록 불러오는 중…',searchError:'검색 목록을 불러오지 못했어요. 다시 시도해 주세요.',textureError:'일부 노트 이미지를 불러오지 못했어요.',captureLoading:'캡처용 이미지를 준비하는 중…',imageTimeout:'이미지 응답 시간 초과',imageError:'캡처 이미지 로딩 실패',chartChanged:'채보가 변경됐어요. 다시 캡처해 주세요.',imageFailed:'이미지 생성 실패',onlineOnly:'캡처는 웹사이트에서 사용할 수 있어요.',section:'{a}–{b} / {total} 구간',stats:'그리기 {ms}ms · {n}개 도형'},
-    en:{menu:'Menu',search:'Search songs',searchPlaceholder:'Song · Composer · ID',language:'Language',capture:'Capture current view',difficulty:'Difficulty',bpmJump:'BPM · Jump to section',skillJump:'Jump to skill',judgment:'Accuracy skill markers',judgmentHelp:'Show end markers for the selected skills. Enable skill shading to show their active ranges.',reset:'Reset conditions',skillFill:'Shade skill ranges',mirror:'Mirror',loading:'Loading chart…',viewer:'Chart viewer',interval:'Eighth-note interval: {ms}ms',skill:'Skill {n}',seconds:'{n}s',judgmentFrom:'{judge} or better → PERFECT',loadError:'Could not load chart ({error}).',missing:'No {difficulty} chart for song {id}',empty:'No charts available',noResults:'No matching songs',searchLoading:'Loading songs…',searchError:'Could not load songs. Please try again.',textureError:'Some note images could not be loaded.',captureLoading:'Preparing capture…',imageTimeout:'Image request timed out',imageError:'Could not load capture image',chartChanged:'The chart changed. Please capture again.',imageFailed:'Could not create image',onlineOnly:'Capture is available on the website.',section:'Sections {a}–{b} / {total}',stats:'Render {ms}ms · {n} shapes'},
-    ja:{menu:'メニュー',search:'楽曲検索',searchPlaceholder:'曲名・作曲者・楽曲ID',language:'言語',capture:'表示範囲をキャプチャ',difficulty:'難易度',bpmJump:'BPM・区間移動',skillJump:'スキル区間へ移動',judgment:'判定強化の表示',judgmentHelp:'選択した条件の終了線を表示します。スキル区間の色付けを有効にすると適用範囲も表示します。',reset:'初期条件に戻す',skillFill:'スキル区間を色付け',mirror:'ミラー',loading:'譜面を読み込み中…',viewer:'譜面ビューア',interval:'8分音符の間隔 {ms}ms',skill:'スキル{n}',seconds:'{n}秒',judgmentFrom:'{judge}以上 → PERFECT',loadError:'譜面を読み込めませんでした（{error}）。',missing:'楽曲{id}の{difficulty}譜面はありません',empty:'譜面がありません',noResults:'該当する楽曲がありません',searchLoading:'楽曲を読み込み中…',searchError:'楽曲を読み込めませんでした。もう一度お試しください。',textureError:'一部のノーツ画像を読み込めませんでした。',captureLoading:'キャプチャを準備中…',imageTimeout:'画像の読み込みがタイムアウトしました',imageError:'キャプチャ画像を読み込めませんでした',chartChanged:'譜面が変わりました。もう一度キャプチャしてください。',imageFailed:'画像を生成できませんでした',onlineOnly:'キャプチャはウェブサイトで利用できます。',section:'{a}–{b} / {total}区間',stats:'描画 {ms}ms・{n}図形'},
+    ko:{menu:'메뉴',search:'곡 검색',customChart:'커스텀채보',downloading:'채보 다운로드 중…',searchPlaceholder:'곡명 · 작곡가 · 곡 번호 · 커스텀채보 코드',language:'언어',capture:'현재 화면 캡처',difficulty:'난이도',bpmJump:'BPM · 구간 이동',skillJump:'스킬 구간 이동',judgment:'판정 강화 표시',judgmentHelp:'선택한 조건의 종료선을 표시합니다. 적용 구간은 스킬 구간 색칠을 켜면 표시됩니다.',reset:'기본 조건으로',skillFill:'스킬 구간 색칠',mirror:'미러',loading:'채보 불러오는 중…',viewer:'채보 보기',interval:'8분음표 간격 {ms}ms',skill:'스킬 {n}',seconds:'{n}초',judgmentFrom:'{judge} 이상 → PERFECT',loadError:'채보를 불러오지 못했어요 ({error}).',missing:'{id}번 곡의 {difficulty} 채보가 없어요',empty:'채보 목록 없음',noResults:'검색 결과가 없어요',searchLoading:'검색 목록 불러오는 중…',searchError:'검색 목록을 불러오지 못했어요. 다시 시도해 주세요.',textureError:'일부 노트 이미지를 불러오지 못했어요.',captureLoading:'캡처용 이미지를 준비하는 중…',imageTimeout:'이미지 응답 시간 초과',imageError:'캡처 이미지 로딩 실패',chartChanged:'채보가 변경됐어요. 다시 캡처해 주세요.',imageFailed:'이미지 생성 실패',onlineOnly:'캡처는 웹사이트에서 사용할 수 있어요.',section:'{a}–{b} / {total} 구간',stats:'그리기 {ms}ms · {n}개 도형'},
+    en:{menu:'Menu',search:'Search songs',customChart:'Custom chart',downloading:'Downloading chart…',searchPlaceholder:'Song · Composer · ID · Custom chart code',language:'Language',capture:'Capture current view',difficulty:'Difficulty',bpmJump:'BPM · Jump to section',skillJump:'Jump to skill',judgment:'Accuracy skill markers',judgmentHelp:'Show end markers for the selected skills. Enable skill shading to show their active ranges.',reset:'Reset conditions',skillFill:'Shade skill ranges',mirror:'Mirror',loading:'Loading chart…',viewer:'Chart viewer',interval:'Eighth-note interval: {ms}ms',skill:'Skill {n}',seconds:'{n}s',judgmentFrom:'{judge} or better → PERFECT',loadError:'Could not load chart ({error}).',missing:'No {difficulty} chart for song {id}',empty:'No charts available',noResults:'No matching songs',searchLoading:'Loading songs…',searchError:'Could not load songs. Please try again.',textureError:'Some note images could not be loaded.',captureLoading:'Preparing capture…',imageTimeout:'Image request timed out',imageError:'Could not load capture image',chartChanged:'The chart changed. Please capture again.',imageFailed:'Could not create image',onlineOnly:'Capture is available on the website.',section:'Sections {a}–{b} / {total}',stats:'Render {ms}ms · {n} shapes'},
+    ja:{menu:'メニュー',search:'楽曲検索',customChart:'カスタム譜面',downloading:'譜面をダウンロード中…',searchPlaceholder:'曲名・作曲者・楽曲ID・カスタム譜面コード',language:'言語',capture:'表示範囲をキャプチャ',difficulty:'難易度',bpmJump:'BPM・区間移動',skillJump:'スキル区間へ移動',judgment:'判定強化の表示',judgmentHelp:'選択した条件の終了線を表示します。スキル区間の色付けを有効にすると適用範囲も表示します。',reset:'初期条件に戻す',skillFill:'スキル区間を色付け',mirror:'ミラー',loading:'譜面を読み込み中…',viewer:'譜面ビューア',interval:'8分音符の間隔 {ms}ms',skill:'スキル{n}',seconds:'{n}秒',judgmentFrom:'{judge}以上 → PERFECT',loadError:'譜面を読み込めませんでした（{error}）。',missing:'楽曲{id}の{difficulty}譜面はありません',empty:'譜面がありません',noResults:'該当する楽曲がありません',searchLoading:'楽曲を読み込み中…',searchError:'楽曲を読み込めませんでした。もう一度お試しください。',textureError:'一部のノーツ画像を読み込めませんでした。',captureLoading:'キャプチャを準備中…',imageTimeout:'画像の読み込みがタイムアウトしました',imageError:'キャプチャ画像を読み込めませんでした',chartChanged:'譜面が変わりました。もう一度キャプチャしてください。',imageFailed:'画像を生成できませんでした',onlineOnly:'キャプチャはウェブサイトで利用できます。',section:'{a}–{b} / {total}区間',stats:'描画 {ms}ms・{n}図形'},
   };
   let language=(()=>{try{const saved=localStorage.getItem('chart-language');if(messages[saved])return saved;}catch{}const browser=(navigator.language||'en').slice(0,2);return messages[browser]?browser:'en';})();
   const t=(key,values={})=>(messages[language][key]||key).replace(/\{(\w+)\}/g,(_,name)=>values[name]??'');
@@ -99,9 +99,11 @@ export function createChartViewer(root, { themes, onCapture }) {
   // Desktop shortcuts now scale the chart, not the browser. Do not carry a
   // stale DPR reference across pages or monitors; only compensate native pinch.
   try{sessionStorage.removeItem('chart-viewer-ui-dpr');}catch{}
+  let playHere;
   function resizeFloatingUI(){
     const viewport=window.visualViewport;
     const zoom=viewport?.scale||1;
+    if(playHere)playHere.style.setProperty('--popup-scale',1/zoom);
     const overlay=$('floating-ui');
     overlay.style.left=`${viewport?.offsetLeft||0}px`;overlay.style.top=`${viewport?.offsetTop||0}px`;
     overlay.style.width=`${(viewport?.width||window.innerWidth)*zoom}px`;
@@ -223,7 +225,13 @@ export function createChartViewer(root, { themes, onCapture }) {
   function bucketChart(){
     const active=judgments.filter(j=>judgmentSelected.has(j.id));
     const ranges=chart.events.filter(e=>e.kind==='skill').flatMap(e=>active.map(j=>({...j,start:e.t,end:e.t+j.duration,number:e.number})));
-    buckets=chart.columns.map(c=>({...c,notes:[],paths:[],bars:[],events:[],ticks:[],judgments:[]}));
+    const skillStarts=chart.events.filter(e=>e.kind==='skill');
+    const skills=skillStarts.map((event,index)=>{
+      const nextStart=skillStarts[index+1]?.t??Infinity;
+      const end=chart.events.find(e=>e.kind==='skillEnd'&&e.t>=event.t&&e.t<=nextStart&&e.number===event.number);
+      return {start:event.t,end:Math.min(end?.t??event.t+5,nextStart)};
+    });
+    buckets=chart.columns.map(c=>({...c,notes:[],paths:[],bars:[],events:[],ticks:[],skills:[],judgments:[]}));
     // Assign once after load, with endpoint overlap to match SVG column edges.
     for(const b of buckets){
       b.notes=chart.notes.filter(n=>n.t>=b.start-.00001&&n.t<=b.end+.00001);
@@ -233,6 +241,7 @@ export function createChartViewer(root, { themes, onCapture }) {
         for(const t of bar.beats)if(t>b.start&&t<b.end)b.bars.push({t,major:false});
       }
       b.ticks=(chart.ticks??[]).filter(t=>t.t>=b.start-.00001&&t.t<=b.end+.00001);
+      b.skills=skills.filter(s=>s.end>=b.start&&s.start<=b.end);
       b.judgments=ranges.filter(j=>j.end>=b.start&&j.start<=b.end);
       b.events=chart.events.filter(e=>e.t>=b.start-.00001&&e.t<=b.end+.00001);
     }
@@ -287,7 +296,7 @@ export function createChartViewer(root, { themes, onCapture }) {
   }
   let zoomFrame=0,pendingScale=null,zoomAnchor=null,resetZoomTimer=0;
   function queueChartZoom(factor,clientX=scroll.clientWidth/2,clientY=scroll.clientHeight/2){
-    if(!chart||document.querySelector('.chart-capture-root'))return;
+    if(!chart||document.querySelector('.chart-capture-root,.playback-overlay'))return;
     clearTimeout(resetZoomTimer);
     pendingScale=Math.max(.5,Math.min(32,(pendingScale??scale)*factor));
     zoomAnchor={x:(scroll.scrollLeft+clientX)/unit,y:(scroll.scrollTop+clientY)/unit,clientX,clientY};
@@ -335,6 +344,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       ctx.strokeStyle=color('.lane-line','stroke');ctx.lineWidth=1;
       for(let lane=0;lane<=12;lane++){ctx.beginPath();ctx.moveTo(left+lane*LANE,top-32);ctx.lineTo(left+lane*LANE,bottom+32);ctx.stroke();}
       for(const bar of b.bars){ctx.strokeStyle=color(bar.major?'.bar-line':'.beat-line','stroke');ctx.lineWidth=bar.major?4:1;ctx.beginPath();ctx.moveTo(left,y(bar.t,b));ctx.lineTo(left+192,y(bar.t,b));ctx.stroke();}
+      const active=judgments.filter(j=>judgmentSelected.has(j.id));
       for(const p of b.paths){
         const point=edge=>edge.map(([lane,t])=>[nx(lane,left),y(t,b)]),l=point(p.left),r=point(p.right);
         ctx.fillStyle=color(p.gold?'.slide-critical':'.slide');
@@ -343,14 +353,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       }
       // Each selected condition gets its own comparison strip, so overlapping
       // ranges and equal-duration conditions stay distinguishable.
-      const active=judgments.filter(j=>judgmentSelected.has(j.id));
       for(const j of b.judgments){
-        const index=active.findIndex(a=>a.id===j.id),strip=192/Math.max(1,active.length);
-        const y0=y(Math.min(j.end,b.end),b),y1=y(Math.max(j.start,b.start),b);
-        if($('skill-fill').checked){
-          ctx.fillStyle=color('.skill-judg-text')+'28';ctx.fillRect(left+index*strip,y0,strip,y1-y0);
-          ctx.strokeStyle=color('.skill-judg-flag','stroke');ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(left+index*strip+1,y0);ctx.lineTo(left+index*strip+1,y1);ctx.stroke();
-        }
         ctx.strokeStyle=color('.skill-judg-flag','stroke');ctx.lineWidth=2;
         if(j.end>=b.start&&j.end<=b.end){ctx.setLineDash([5,3]);ctx.beginPath();ctx.moveTo(left,y(j.end,b));ctx.lineTo(left+192,y(j.end,b));ctx.stroke();ctx.setLineDash([]);}
       }
@@ -378,6 +381,19 @@ export function createChartViewer(root, { themes, onCapture }) {
         const iw=image.image.naturalWidth*fit,ih=image.image.naturalHeight*fit;
         ctx.save();ctx.translate(cx,cy+4-h);if(direction===4)ctx.scale(-1,1);
         ctx.drawImage(image.image,-iw/2,(h-ih)/2,iw,ih);ctx.restore();
+      }
+      // Keep the ranges translucent but draw them over the notes so they are
+      // still visible on dense charts. Accuracy ranges use a separate hue.
+      if($('skill-fill').checked){
+        for(const skill of b.skills){
+          const y0=y(Math.min(skill.end,b.end),b),y1=y(Math.max(skill.start,b.start),b);
+          ctx.fillStyle='rgba(0, 174, 255, 0.36)';ctx.fillRect(left,y0,192,y1-y0);
+        }
+        for(const j of b.judgments){
+          const index=active.findIndex(a=>a.id===j.id),strip=192/Math.max(1,active.length);
+          const y0=y(Math.min(j.end,b.end),b),y1=y(Math.max(j.start,b.start),b);
+          ctx.fillStyle='rgba(255, 65, 155, 0.40)';ctx.fillRect(left+index*strip,y0,strip,y1-y0);
+        }
       }
       // Match SVG speed markers: full lane-width line, multiplier at the right.
       ctx.strokeStyle=color('.speed-line','stroke');ctx.fillStyle=color('.speed-text');
@@ -465,12 +481,14 @@ export function createChartViewer(root, { themes, onCapture }) {
   }
   function jump(time,label){
     const col=buckets.findIndex((b,i)=>time>=b.start&&(time<b.end||i===buckets.length-1));if(col<0)return;
-    // Put the activation in the lower part of the view, leaving room for its duration above.
-    scroll.scrollLeft=Math.max(0,(col*COL+40)*unit);
-    scroll.scrollTop=Math.max(0,(plotBottom-(time-buckets[col].start)*TIME)*unit-height*.78);
     highlight={time,col,label};updateHighlight();
     const marker=$('jump-marker');marker.classList.remove('pulse');void marker.offsetWidth;marker.classList.add('pulse');
-    menu(false);schedule();
+    menu(false);
+    // Let the browser scroll both the layout and pinch-zoom visual viewports.
+    // Assigning document scroll offsets cannot pan the visual viewport when
+    // the layout viewport has already reached its scroll boundary.
+    marker.scrollIntoView({block:'center',inline:'center',behavior:'instant'});
+    schedule();
   }
   function updateHighlight(){
     const marker=$('jump-marker');if(!highlight){marker.hidden=true;return;}
@@ -557,10 +575,20 @@ export function createChartViewer(root, { themes, onCapture }) {
       await loadSongCatalog();
       if(disposed)return;
       renderSearch(true);
-    }catch{if(disposed)return;catalogPending=null;$('search-results').textContent=t('searchError');}
+    }catch{if(disposed)return;catalogPending=null;if(isCustomChartCode($('song-search').value.trim()))renderSearch();else $('search-results').textContent=t('searchError');}
   }
   function renderSearch(focusCurrent=false){
-    if(!songCatalog)return;
+    const code=$('song-search').value.trim();
+    if(isCustomChartCode(code)){
+      searchMatches=[];searchWindow='';
+      const button=document.createElement('button');button.type='button';
+      const info=document.createElement('div');info.className='search-song-info';
+      const title=document.createElement('strong'),detail=document.createElement('span');
+      title.textContent=t('customChart');detail.textContent=code;info.append(title,detail);button.append(info);
+      button.onclick=()=>location.assign(customChartUrl(code));
+      $('search-results').replaceChildren(button);$('search-results').scrollTop=0;return;
+    }
+    if(!songCatalog){searchMatches=[];$('search-results').textContent=t('searchLoading');return;}
     const query=normalize($('song-search').value);
     searchMatches=songCatalog.filter(song=>!query||[song.id,song.title_ko,song.title_jp,song.composer,song.composer_jp,song.reading].some(value=>normalize(value).includes(query)));
     const current=focusCurrent&&!query?searchMatches.findIndex(song=>song.id===(chart?.musicId??Number(route?.[1]))):0;
@@ -569,6 +597,7 @@ export function createChartViewer(root, { themes, onCapture }) {
   }
   function renderSearchWindow(top=$('search-results').scrollTop,force=false){
     const list=$('search-results');
+    if(isCustomChartCode($('song-search').value.trim()))return;
     if(!searchMatches.length){list.textContent=t('noResults');return;}
     const start=Math.max(0,Math.floor(top/SEARCH_ROW_HEIGHT)-3);
     const end=Math.min(searchMatches.length,Math.ceil((top+list.clientHeight)/SEARCH_ROW_HEIGHT)+3);
@@ -596,7 +625,7 @@ export function createChartViewer(root, { themes, onCapture }) {
     if(!searchFrame)searchFrame=requestAnimationFrame(()=>{searchFrame=0;if(!$('song-search-panel').hidden)renderSearchWindow();});
   },{passive:true});
   $('song-search-toggle').onclick=openSearch;$('song-search').oninput=()=>renderSearch();
-  $('song-search').onkeydown=event=>{if(event.key==='Enter'){const song=searchMatches[Math.floor($('search-results').scrollTop/SEARCH_ROW_HEIGHT)];if(song){const diff=(chart?.difficulty||route?.[2]||'master').toLowerCase();location.assign(`/${song.id}/${song.levels[diff]!=null?diff:'master'}`);}}};
+  $('song-search').onkeydown=event=>{if(event.key==='Enter'){const code=$('song-search').value.trim();if(isCustomChartCode(code)){location.assign(customChartUrl(code));return;}const song=searchMatches[Math.floor($('search-results').scrollTop/SEARCH_ROW_HEIGHT)];if(song){const diff=(chart?.difficulty||route?.[2]||'master').toLowerCase();location.assign(`/${song.id}/${song.levels[diff]!=null?diff:'master'}`);}}};
   $('language-toggle').onclick=()=>{togglePanel('language',$('language-panel').hidden);togglePanel('song-search',false);};
   root.querySelectorAll('[data-language]').forEach(button=>button.onclick=()=>{
     language=button.dataset.language;try{localStorage.setItem('chart-language',language);}catch{}
@@ -610,6 +639,32 @@ export function createChartViewer(root, { themes, onCapture }) {
   listen(document,'pointerdown',event=>{if(!$('menu').hidden&&!$('menu').contains(event.target)&&!$('menu-toggle').contains(event.target))menu(false);});
   listen(document,'keydown',event=>{if(event.key==='Escape'){menu(false);$('menu-toggle').focus();}});
   $('mirror').onchange=()=>schedule();$('skill-fill').onchange=()=>schedule();
+  playHere=document.createElement('button');
+  playHere.className='chart-play-here';playHere.hidden=true;$('space').append(playHere);
+  // Only taps select a point; native scrolling and pinch gestures remain untouched.
+  let chartPointer=null,selectedTime=0;
+  listen($('stage'),'pointerdown',event=>{if(event.isPrimary)chartPointer={x:event.clientX,y:event.clientY,sx:scroll.scrollLeft,sy:scroll.scrollTop};else chartPointer=null;},{passive:true});
+  listen($('stage'),'pointercancel',()=>{chartPointer=null;},{passive:true});
+  listen($('stage'),'pointerup',event=>{
+    const down=chartPointer;chartPointer=null;
+    if(!down||!chart||pinching||event.target.closest('button')||Math.hypot(event.clientX-down.x,event.clientY-down.y)>8||Math.abs(scroll.scrollLeft-down.sx)+Math.abs(scroll.scrollTop-down.sy)>8)return;
+    const rect=$('space').getBoundingClientRect(),x=(event.clientX-rect.left)/unit,y=(event.clientY-rect.top)/unit;
+    const col=Math.floor((x-40)/COL),bucket=buckets[col];
+    if(!bucket)return;
+    const time=bucket.start+(plotBottom-y)/TIME;
+    if(time<bucket.start||time>bucket.end)return;
+    selectedTime=time;playHere.textContent=({ko:'여기서 재생',en:'Play from here',ja:'ここから再生'}[language])+' · '+time.toFixed(2)+'s';
+    playHere.hidden=false;
+    const viewport=window.visualViewport;
+    const zoom=viewport?.scale||1;playHere.style.setProperty('--popup-scale',1/zoom);
+    const minX=(viewport?.pageLeft??scroll.scrollLeft)+playHere.offsetWidth/zoom/2+8/zoom;
+    const maxX=(viewport?.pageLeft??scroll.scrollLeft)+(viewport?.width||scroll.clientWidth)-playHere.offsetWidth/zoom/2-8/zoom;
+    playHere.style.left=`${Math.max(minX,Math.min(maxX,x*unit))}px`;
+    playHere.style.top=`${Math.max((viewport?.pageTop??scroll.scrollTop)+playHere.offsetHeight/zoom*1.1+8/zoom,y*unit)}px`;
+  },{passive:true});
+  listen(playHere,'click',event=>{event.stopPropagation();playHere.hidden=true;onPlayback?.({chart,startTime:selectedTime,language,mirrored:$('mirror').checked});});
+  listen(document,'pointerdown',event=>{if(!playHere.contains(event.target))playHere.hidden=true;},{passive:true});
+  cleanups.push(()=>playHere.remove());
   listen(document,'scroll',pan,{passive:true});
   let resizeFrame=0;
   let layoutWidth=scroll.clientWidth;
@@ -666,8 +721,10 @@ export function createChartViewer(root, { themes, onCapture }) {
     const embedded=$('chart-bundle');
     if(customRoute){
       const code=customRoute[1];
+      $('message').classList.add('chart-download-status');$('message').textContent=t('downloading');
       const data=await json(`${customAPI}/api/chart-json/${encodeURIComponent(code)}`);
       if(disposed)return;
+      $('message').classList.remove('chart-download-status');
       if(data.version!==3||!Array.isArray(data.notes)||!Array.isArray(data.columns))throw new Error('Invalid custom chart JSON');
       rows=[{id:`custom:${code}`,musicId:data.musicId,title:data.title,difficulty:data.difficulty,level:data.level,data}];
     }else if(route){
@@ -686,7 +743,7 @@ export function createChartViewer(root, { themes, onCapture }) {
       rows=[current,...rows.filter(row=>row!==current)];
     }else rows=embedded?JSON.parse(embedded.textContent):await json('/data/index.json');
     if(!rows.length)throw new Error(t('empty'));await select(rows[0]);
-  }catch(error){if(!disposed)$('message').textContent=error.message;}})();
+  }catch(error){if(!disposed){$('message').classList.remove('chart-download-status');$('message').textContent=error.message;}}})();
   return () => {
     disposed=true;version++;
     lifetime.abort();for(const request of requests)request.abort();requests.clear();

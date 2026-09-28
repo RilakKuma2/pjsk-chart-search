@@ -1,0 +1,68 @@
+.playback-overlay{position:fixed;inset:0;z-index:1000;background:#101426;color:white;font:14px system-ui;color-scheme:dark;outline:0}
+.playback-overlay *{box-sizing:border-box}
+.playback-body{width:100%;height:100%;display:grid;grid-template-columns:minmax(0,1fr) 300px;align-items:center}
+.playback-stage{position:relative;min-width:0;width:100%;aspect-ratio:16/9;max-height:100%;overflow:hidden;background:#0c1024}
+/* The aspect-ratio stage owns the size. An in-flow canvas with height:100%
+   feeds its backing-store dimensions into flex layout on mobile first paint. */
+.playback-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+.playback-stage header{position:absolute;inset:0 0 auto;z-index:2;display:flex;align-items:center;gap:10px;padding:10px 76px 10px 12px;min-height:54px;background:linear-gradient(#080b24b0,transparent)}
+.playback-stage header strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.playback-stage header small{margin-left:auto;opacity:.7;font-size:10px}
+.playback-jacket{width:36px;height:36px;object-fit:cover;border-radius:4px;flex:none}
+.playback-body aside{height:100%;min-height:0;overflow:auto;overscroll-behavior:contain;padding:18px;display:flex;flex-direction:column;gap:12px;background:#e9e9f1;color:#53516f}
+.playback-overlay button{border:1px solid #ffffff40;background:#ffffff16;color:white;border-radius:8px;padding:8px;cursor:pointer;font:inherit}
+.playback-body aside button{background:white;color:#53516f;border:1px solid #c7c6d3;box-shadow:0 2px 4px #0002}
+.playback-body aside button[aria-pressed=true],.playback-body aside .playback-toggle{background:#66dacb;color:#183b3c}
+.playback-overlay button:disabled{opacity:.4}
+.playback-overlay label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:650}
+.playback-overlay input[type=number]{width:86px;padding:8px;background:#c8c7d9;color:#53516f;border:0;border-radius:8px;font:inherit;text-align:center}
+.playback-overlay input[type=range]{width:100%;accent-color:#55b9af}
+.playback-steps{display:flex;gap:5px}
+.playback-steps button{flex:1;padding:10px 2px;font-size:12px;min-width:0}
+.playback-body output{font-variant-numeric:tabular-nums}
+.playback-overlay .playback-round{border-radius:50%;background:#fff;color:#484560;box-shadow:0 2px 5px #0006;border:0;display:grid;place-items:center}
+.playback-round svg{fill:currentColor;width:55%;height:55%}
+.playback-stage-pause{position:absolute;right:5%;top:2%;width:clamp(30px,5.4%,70px);aspect-ratio:1;padding:5px!important;z-index:3}
+.playback-fullscreen{position:absolute;left:12px;bottom:12px;z-index:3;width:38px;height:38px;display:grid;place-items:center;font-size:24px!important;background:#25233cc9!important}
+.playback-clean .playback-body{display:block}
+.playback-clean .playback-stage{width:100%;height:100%;max-height:none;aspect-ratio:auto}
+.playback-clean header,.playback-clean aside{display:none!important}
+.playback-clean .playback-fullscreen{opacity:.5}
+.playback-clean .playback-fullscreen:hover,.playback-clean .playback-fullscreen:focus{opacity:1}
+@media all{
+ .playback-overlay[data-portrait=true] .playback-body{display:flex;flex-direction:column;align-items:stretch}
+ .playback-overlay[data-portrait=true] .playback-stage{flex:none;aspect-ratio:16/9}
+ .playback-overlay[data-portrait=true] .playback-body aside{flex:1;width:100%;height:auto;min-height:0}
+ .playback-overlay[data-portrait=true] .playback-stage header{min-height:32px;padding:5px 50px 5px 8px;gap:6px}
+ .playback-overlay[data-portrait=true] .playback-stage header strong{font-size:10px}
+ .playback-overlay[data-portrait=true] .playback-stage header small{display:none}
+ .playback-overlay[data-portrait=true] .playback-jacket{width:24px;height:24px}
+ .playback-overlay[data-portrait=true] .playback-stage header button{padding:3px 6px}
+ /* Rotate the entire playfield, including controls, when orientation locking
+    isn't available. No extra portrait padding or landscape-specific camera. */
+ .playback-overlay[data-portrait=true].playback-clean .playback-body{position:absolute;left:50%;top:50%;width:var(--playback-height,100dvh);height:var(--playback-width,100dvw);transform:translate(-50%,-50%) rotate(90deg);transform-origin:center}
+ .playback-overlay[data-portrait=true].playback-clean .playback-stage{width:100%;height:100%}
+}
+.playback-overlay:fullscreen{background:#101426}
+.playback-overlay .playback-exit{position:absolute;left:12px;top:12px;z-index:4;background:#25233cc9;min-height:36px;padding:7px 12px}
+.playback-loop-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+.playback-loop-toolbar output{white-space:nowrap;margin-right:auto;font-size:12px}
+.playback-body .playback-loop-toolbar button{padding:6px 5px;font-size:11px;white-space:nowrap}
+.playback-progress{position:relative;padding-top:23px}
+.playback-progress input{display:block;margin:0;height:22px}
+.playback-flags{position:absolute;left:8px;right:8px;top:0;height:23px;pointer-events:none}
+.playback-flag{position:absolute;top:0;transform:translateX(-50%);font:bold 11px system-ui;background:#287c75;color:white;padding:2px 5px;border-radius:3px 3px 0 0}
+.playback-flag::after{content:'';position:absolute;top:100%;left:50%;height:10px;border-left:2px solid #287c75}
+.playback-flag.flag-B{background:#cf387e;transform:translateX(-25%)}
+.playback-flag.flag-B::after{left:25%;border-color:#cf387e}
+@media(max-width:760px) and (orientation:portrait){.playback-overlay .playback-exit{left:8px;top:8px;font-size:12px;min-height:30px;padding:5px 8px}}
+
+.playback-effects-toggle input[type=checkbox]{width:22px;height:22px;accent-color:#73e0cf;cursor:pointer}
+
+.playback-overlay .playback-stage-pause{padding:0!important;border:0;background:transparent;box-shadow:none;aspect-ratio:1}
+.playback-stage-pause img{display:block;width:100%;height:100%}
+.playback-stage-pause svg{position:absolute;inset:0;width:100%;height:100%}
+
+.playback-overlay .playback-exit.playback-round{min-height:0;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:#fff;color:#484560;box-shadow:0 2px 5px #0006;display:grid;place-items:center}
+.playback-exit.playback-round svg{width:62%;height:62%;fill:currentColor}
+.playback-effects-toggle input:disabled{opacity:.4;cursor:default}

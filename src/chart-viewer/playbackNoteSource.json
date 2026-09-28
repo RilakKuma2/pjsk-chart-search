@@ -1,0 +1,66 @@
+{
+  "bundle": "live/note/custom01",
+  "sha256": "d5b4925685debe35a4629dc2e09dc24b86ca14c6c1e554c6a56483ceedc00074",
+  "sourceMethod": "Sekai.LiveUtility.CalcSpriteRendererSize",
+  "sprite": {
+    "m_Name": "notes_2",
+    "m_Rect": {
+      "x": 0.0,
+      "y": 753.0,
+      "width": 354.0,
+      "height": 186.0
+    },
+    "m_Border": {
+      "x": 100.0,
+      "y": 0.0,
+      "z": 100.0,
+      "w": 0.0
+    },
+    "m_PixelsToUnits": 108.0,
+    "m_Pivot": {
+      "x": 0.5,
+      "y": 0.5
+    }
+  },
+  "prefabs": {
+    "FlickNote": {
+      "m_Size": {
+        "x": 3.277777671813965,
+        "y": 1.7222222089767456
+      },
+      "m_DrawMode": 1,
+      "m_Color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      }
+    },
+    "LongNote": {
+      "m_Size": {
+        "x": 3.277777671813965,
+        "y": 1.7222222089767456
+      },
+      "m_DrawMode": 1,
+      "m_Color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      }
+    },
+    "NormalNote": {
+      "m_Size": {
+        "x": 3.277777671813965,
+        "y": 1.7222222089767456
+      },
+      "m_DrawMode": 1,
+      "m_Color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      }
+    }
+  }
+}
