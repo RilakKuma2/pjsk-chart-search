@@ -1,4 +1,5 @@
 import { CUSTOM_API, isCustomChartCode, customChartUrl } from '../custom-charts/api.js'
+import { CHART_TIME_SCALE, COLUMN_EDGE_PADDING, pathsForColumn } from './overviewGeometry.js'
 
 export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   let disposed=false;
@@ -82,7 +83,7 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
     if(!$('song-search-panel').hidden)renderSearch();
   }
   const canvas=$('canvas'),ctx=canvas.getContext('2d',{alpha:false}),scroll=document.scrollingElement;
-  const ASSET='https://asset.rilaksekai.com',COL=272,LANE=16,TIME=360;
+  const ASSET='https://asset.rilaksekai.com',COL=272,LANE=16,TIME=CHART_TIME_SCALE;
   const route=location.pathname.match(/^\/(\d+)(?:\/(easy|normal|hard|expert|master|append))?\/?$/i);
   const customRoute=location.pathname.match(/^\/custom\/([A-Za-z0-9_-]{1,128})\/?$/i);
   const customAPI=CUSTOM_API;
@@ -235,7 +236,7 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
     // Assign once after load, with endpoint overlap to match SVG column edges.
     for(const b of buckets){
       b.notes=chart.notes.filter(n=>n.t>=b.start-.00001&&n.t<=b.end+.00001);
-      b.paths=chart.paths.filter(p=>p.end>=b.start&&p.start<=b.end);
+      b.paths=pathsForColumn(chart.paths,b);
       for(const bar of chart.bars){
         if(bar.t>=b.start-.00001&&bar.t<=b.end+.00001)b.bars.push({t:bar.t,label:`#${bar.number-1}`,major:true});
         for(const t of bar.beats)if(t>b.start&&t<b.end)b.bars.push({t,major:false});
@@ -339,10 +340,10 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
     let count=0;
     for(let col=start;col<=end;col++){
       const b=buckets[col],left=col*COL+80,top=y(b.end,b),bottom=plotBottom;
-      ctx.fillStyle=laneColor;ctx.fillRect(left,top-32,192,bottom-top+64);
-      ctx.save();ctx.beginPath();ctx.rect(left-40,top-32,COL,bottom-top+64);ctx.clip();
+      ctx.fillStyle=laneColor;ctx.fillRect(left,top-COLUMN_EDGE_PADDING,192,bottom-top+2*COLUMN_EDGE_PADDING);
+      ctx.save();ctx.beginPath();ctx.rect(left-40,top-COLUMN_EDGE_PADDING,COL,bottom-top+2*COLUMN_EDGE_PADDING);ctx.clip();
       ctx.strokeStyle=color('.lane-line','stroke');ctx.lineWidth=1;
-      for(let lane=0;lane<=12;lane++){ctx.beginPath();ctx.moveTo(left+lane*LANE,top-32);ctx.lineTo(left+lane*LANE,bottom+32);ctx.stroke();}
+      for(let lane=0;lane<=12;lane++){ctx.beginPath();ctx.moveTo(left+lane*LANE,top-COLUMN_EDGE_PADDING);ctx.lineTo(left+lane*LANE,bottom+COLUMN_EDGE_PADDING);ctx.stroke();}
       for(const bar of b.bars){ctx.strokeStyle=color(bar.major?'.bar-line':'.beat-line','stroke');ctx.lineWidth=bar.major?4:1;ctx.beginPath();ctx.moveTo(left,y(bar.t,b));ctx.lineTo(left+192,y(bar.t,b));ctx.stroke();}
       const active=judgments.filter(j=>judgmentSelected.has(j.id));
       for(const p of b.paths){
