@@ -46,7 +46,7 @@ export function noteBodySize(laneCount, projectedUnit) {
 export function alignConnectionNotes(notes, paths) {
   const value=(p,u,k)=>p[0][k]*(1-u)**3+3*p[1][k]*(1-u)**2*u+3*p[2][k]*(1-u)*u*u+p[3][k]*u**3
   return notes.map(note=>{
-    if(note.kind!=='tick'||note.nativeId!=null)return note
+    if(note.kind!=='tick'||note.nativeId!=null||note.holdId!=null)return note
     const matches=[]
     for(const path of paths){
       if(path.guide||!!path.gold!==!!note.gold||note.t<=path.start+1e-6||note.t>=path.end-1e-6)continue

@@ -25,4 +25,6 @@ test('native hold IDs keep touching independent holds separate',()=>{
  assert.ok(tracks.every(t=>t.segments.length===2&&t.end===2))
  const native={nativeId:5,kind:'tick',t:.5,lane:1.25,width:3}
  assert.deepEqual(alignConnectionNotes([native],[segment(0,1,1)]),[native],'do not quantize native fractional marker positions')
+ const resolved={holdId:1,kind:'tick',t:.5,lane:1.25,width:3}
+ assert.deepEqual(alignConnectionNotes([resolved],[segment(0,1,1)]),[resolved],'preserve converter-resolved SUS markers too')
 })
