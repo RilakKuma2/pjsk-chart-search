@@ -1,5 +1,6 @@
 import { CUSTOM_API, isCustomChartCode, customChartUrl } from '../custom-charts/api.js'
 import { CHART_TIME_SCALE, COLUMN_EDGE_PADDING, pathsForColumn } from './overviewGeometry.js'
+import { clampChartViewport } from './viewport.js'
 
 export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   let disposed=false;
@@ -96,6 +97,15 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   let judgmentSelected=new Set(judgmentDefaults),capturing=false;
   // suite skills 5/6/7: judgment_up durations for rarity 2/3/4, levels 1–4.
   const judgments=[2,3,4].flatMap(rarity=>[1,2,3,4].map(level=>({id:`${rarity}-${level}`,rarity,level,duration:3+rarity*.5+level*.5,label:`★${rarity} Lv.${level}`})));
+  // Left to right: normal, ★4 Lv.1, ★3 Lv.4, ★4 Lv.4.
+  const skillShadeColors={
+    EASY:['#2059e0','#a326d2','#dd3759','#d47700'],
+    NORMAL:['#087954','#9c27d5','#e43a70','#b56d00'],
+    HARD:['#087a64','#2467df','#922cd6','#d32464'],
+    EXPERT:['#007d66','#1766dd','#8434d6','#a56b00'],
+    MASTER:['#007957','#007eb5','#d14710','#c62265'],
+    APPEND:['#007957','#007eb5','#d14710','#c62265'],
+  };
   const cache=new Map(),textures=new Map(),sprites=new Map();
   // Desktop shortcuts now scale the chart, not the browser. Do not carry a
   // stale DPR reference across pages or monitors; only compensate native pinch.
@@ -123,6 +133,17 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   let detailTimer=0,detailRatio=0,detailFrame=0,detailBounds=null;
   const schedule=(invalidate=true)=>{if(disposed)return;if(invalidate!==false){dirty=true;queueDetail(true);}if(!frame)frame=requestAnimationFrame(draw);};
   const overscan=()=>Math.min(160,scroll.clientWidth*.3);
+  function visibleViewport(){
+    const viewport=window.visualViewport,space=$('space');
+    return clampChartViewport({
+      x:viewport?.pageLeft??scroll.scrollLeft,
+      y:viewport?.pageTop??scroll.scrollTop,
+      width:viewport?.width||scroll.clientWidth,
+      height:viewport?.height||scroll.clientHeight,
+      contentWidth:Math.max(space.scrollWidth,space.offsetWidth),
+      contentHeight:Math.max(space.scrollHeight,space.offsetHeight),
+    });
+  }
 
   function queueDetail(invalidate=false){
     if(invalidate){detailCanvas.hidden=true;detailBounds=null;}
@@ -132,9 +153,7 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   function sharpen(){
     if(!chart||pinching||viewportSettling||dirty)return;
     const viewport=window.visualViewport;
-    const vx=viewport?.pageLeft??scroll.scrollLeft,vy=viewport?.pageTop??scroll.scrollTop;
-    const vw=Math.min(viewport?.width||scroll.clientWidth,scroll.scrollWidth-vx);
-    const vh=Math.min(viewport?.height||scroll.clientHeight,scroll.scrollHeight-vy);
+    const visible=visibleViewport(),vx=visible.x,vy=visible.y,vw=visible.width,vh=visible.height;
     const pad=Math.min(96/(viewport?.scale||1),vw*.25),guard=pad*.2;
     if(detailBounds&&vx>=detailBounds.x+(detailBounds.x>0?guard:0)&&vy>=detailBounds.y+(detailBounds.y>0?guard:0)&&
       vx+vw<=detailBounds.x+detailBounds.w-(detailBounds.x+detailBounds.w<scroll.scrollWidth?guard:0)&&
@@ -230,8 +249,11 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
     const skills=skillStarts.map((event,index)=>{
       const nextStart=skillStarts[index+1]?.t??Infinity;
       const end=chart.events.find(e=>e.kind==='skillEnd'&&e.t>=event.t&&e.t<=nextStart&&e.number===event.number);
-      return {start:event.t,end:Math.min(end?.t??event.t+5,nextStart)};
-    });
+      return [
+        {start:event.t,end:Math.min(end?.t??event.t+5,nextStart),strip:0},
+        ...judgmentDefaults.map((id,index)=>({start:event.t,end:event.t+judgments.find(j=>j.id===id).duration,strip:index+1})),
+      ];
+    }).flat();
     buckets=chart.columns.map(c=>({...c,notes:[],paths:[],bars:[],events:[],ticks:[],skills:[],judgments:[]}));
     // Assign once after load, with endpoint overlap to match SVG column edges.
     for(const b of buckets){
@@ -258,7 +280,7 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
     if(Math.abs(old-unit)>.00001)sprites.clear();
     const totalWidth=buckets.length*COL+80;
     $('space').style.width=`${totalWidth*unit}px`;$('space').style.height=`${(plotBottom+320)*unit}px`;
-    width=Math.max(1,scroll.clientWidth);height=Math.max(1,scroll.clientHeight);
+    const visible=visibleViewport();width=visible.width;height=visible.height;
     // Allocate only once the pinch has settled, not on every viewport event.
     // Bound mobile backing-store memory instead of growing the entire layout
     // viewport by the square of the pinch factor.
@@ -282,10 +304,13 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
   function draw(force=false){
     frame=0;
     if(force!==true&&(pinching||viewportSettling))return;
-    const sx=scroll.scrollLeft,sy=scroll.scrollTop;
+    const visible=visibleViewport(),sx=visible.x,sy=visible.y;
+    width=visible.width;height=visible.height;
     if(painted&&!dirty&&sx>=paintX&&sy>=paintY&&sx+width<=paintX+paintWidth&&sy+height<=paintY+paintHeight)return;
     const pad=overscan();paintX=Math.max(0,sx-pad);paintY=Math.max(0,sy-pad);
-    paintWidth=width+pad*2;paintHeight=height+pad*2;
+    const space=$('space');
+    paintWidth=Math.max(1,Math.min(width+pad*2,Math.max(space.scrollWidth,space.offsetWidth)-paintX));
+    paintHeight=Math.max(1,Math.min(height+pad*2,Math.max(space.scrollHeight,space.offsetHeight)-paintY));
     const nextWidth=Math.max(1,Math.round(paintWidth*pixelRatio)),nextHeight=Math.max(1,Math.round(paintHeight*pixelRatio));
     if(canvas.width!==nextWidth)canvas.width=nextWidth;
     if(canvas.height!==nextHeight)canvas.height=nextHeight;
@@ -345,7 +370,6 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
       ctx.strokeStyle=color('.lane-line','stroke');ctx.lineWidth=1;
       for(let lane=0;lane<=12;lane++){ctx.beginPath();ctx.moveTo(left+lane*LANE,top-COLUMN_EDGE_PADDING);ctx.lineTo(left+lane*LANE,bottom+COLUMN_EDGE_PADDING);ctx.stroke();}
       for(const bar of b.bars){ctx.strokeStyle=color(bar.major?'.bar-line':'.beat-line','stroke');ctx.lineWidth=bar.major?4:1;ctx.beginPath();ctx.moveTo(left,y(bar.t,b));ctx.lineTo(left+192,y(bar.t,b));ctx.stroke();}
-      const active=judgments.filter(j=>judgmentSelected.has(j.id));
       for(const p of b.paths){
         const point=edge=>edge.map(([lane,t])=>[nx(lane,left),y(t,b)]),l=point(p.left),r=point(p.right);
         ctx.fillStyle=color(p.gold?'.slide-critical':'.slide');
@@ -383,17 +407,16 @@ export function createChartViewer(root, { themes, onCapture, onPlayback }) {
         ctx.save();ctx.translate(cx,cy+4-h);if(direction===4)ctx.scale(-1,1);
         ctx.drawImage(image.image,-iw/2,(h-ih)/2,iw,ih);ctx.restore();
       }
-      // Keep the ranges translucent but draw them over the notes so they are
-      // still visible on dense charts. Accuracy ranges use a separate hue.
+      // Four independent comparison strips, over the notes without overlapping
+      // one range's color with another. End-marker selections remain separate.
       if($('skill-fill').checked){
+        const palette=skillShadeColors[chart.difficulty.toUpperCase()]??skillShadeColors.MASTER;
         for(const skill of b.skills){
           const y0=y(Math.min(skill.end,b.end),b),y1=y(Math.max(skill.start,b.start),b);
-          ctx.fillStyle='rgba(0, 174, 255, 0.36)';ctx.fillRect(left,y0,192,y1-y0);
-        }
-        for(const j of b.judgments){
-          const index=active.findIndex(a=>a.id===j.id),strip=192/Math.max(1,active.length);
-          const y0=y(Math.min(j.end,b.end),b),y1=y(Math.max(j.start,b.start),b);
-          ctx.fillStyle='rgba(255, 65, 155, 0.40)';ctx.fillRect(left+index*strip,y0,strip,y1-y0);
+          const x=left+skill.strip*48;
+          ctx.fillStyle=palette[skill.strip]+'66';ctx.fillRect(x,y0,48,y1-y0);
+          ctx.strokeStyle=palette[skill.strip]+'cc';ctx.lineWidth=1.5;
+          ctx.beginPath();ctx.moveTo(x+.75,y1);ctx.lineTo(x+.75,y0);ctx.lineTo(x+47.25,y0);ctx.stroke();
         }
       }
       // Match SVG speed markers: full lane-width line, multiplier at the right.
